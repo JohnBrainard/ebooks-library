@@ -2,7 +2,10 @@ FROM openjdk:17-alpine3.14 as builder
 
 COPY . /build/
 WORKDIR /build
-RUN ["./gradlew", "installDist"]
+
+RUN apk add nodejs
+
+RUN ["./gradlew", "--stacktrace", "installDist"]
 RUN find . -name "*.bat"
 
 FROM openjdk:17-alpine3.14

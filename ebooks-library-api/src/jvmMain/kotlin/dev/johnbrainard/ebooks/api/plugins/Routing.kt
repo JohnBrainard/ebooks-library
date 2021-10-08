@@ -2,11 +2,9 @@ package dev.johnbrainard.ebooks.api.plugins
 
 import dev.johnbrainard.ebooks.EbookCollectionId
 import dev.johnbrainard.ebooks.EbookId
-import dev.johnbrainard.ebooks.EbookMetaRepository
-import dev.johnbrainard.ebooks.files.FilesEbookMetaRepository
-import dev.johnbrainard.ebooks.meta.pdfbox.PdfBoxMetaExtractor
 import io.ktor.application.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.*
@@ -15,11 +13,15 @@ fun Application.configureRouting(collectionsService: CollectionsService) {
 
 	routing {
 		get("/") {
-			call.respond(mapOf(
-				"collections" to call.url {
-					path("collections")
-				}
-			))
+			val indexHtml = this::class.java.classLoader.getResource("index.html")!!.readText()
+			call.respondText(
+				indexHtml,
+				ContentType.Text.Html
+			)
+		}
+
+		static("/") {
+			resources("")
 		}
 
 		get("/collections") {
