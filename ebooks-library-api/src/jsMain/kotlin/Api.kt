@@ -12,19 +12,3 @@ val jsonClient = HttpClient {
 		serializer = KotlinxSerializer()
 	}
 }
-
-suspend fun getCollections(): CollectionsDto {
-	return jsonClient.get("$endpoint/collections")
-}
-
-@Serializable
-data class CollectionsDto(
-	val collections: List<CollectionDto>
-)
-
-@Serializable
-data class CollectionDto(
-	val name: String,
-	val path: String,
-	val url: String
-)
