@@ -1,0 +1,49 @@
+/* https://colorhunt.co/palette/f0a500334756082032000000 */
+
+body {
+    font-family: sans-serif;
+    margin: .25em;
+    padding: .25em;
+}
+
+#header {
+    background-color: #082032;
+    color: white;
+    padding: .25em 1em;
+    margin: .25em;
+    border-radius: 25px;
+}
+
+#header h1 {
+    justify-content: flex-start;
+}
+
+i.icon {
+    font-style: normal;
+    font-size: 200%;
+    padding: 0 10px
+}
+
+#collections {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.collection {
+    width: 300px;
+
+    background-color: #334756;
+    color: white;
+    padding: .25em 1em;
+    margin: .25em;
+    border-radius: 10px;
+}
+
+.selected {
+    background-color: #F0A500;
+    color: #334756;
+}
+
+.collection h1 {
+    font-size: 1.5em;
+}

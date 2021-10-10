@@ -11,3 +11,7 @@ suspend fun getCollections(): CollectionsDto {
 suspend fun getCollection(url: String): CollectionDto {
 	return jsonClient.get(url)
 }
+
+suspend fun getCollectionEntry(url: String): EntryDetailDto {
+	return jsonClient.get(url)
+}

@@ -1,12 +1,10 @@
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.html.js.onClickFunction
+import kotlinx.html.id
 import model.CollectionSummaryDto
 import model.getCollections
 import react.*
 import react.dom.div
-import react.dom.h1
-import react.dom.h2
 
 external interface EbooksAppState : State {
 	var selectedCollection: CollectionSummaryDto?
@@ -32,19 +30,25 @@ class EbooksApp : RComponent<Props, EbooksAppState>() {
 	}
 
 	override fun RBuilder.render() {
-		h1 {
-			+"eBooks Collections"
-		}
+		div {
+			attrs.id = "collections"
 
-		state.collections.forEach { ebookCollection ->
-			ebookCollectionSummary {
-				this.ebookCollection = ebookCollection
-				this.selected = ebookCollection == state.selectedCollection
-				this.onEbookCollectionSelected = {
-					setState {
-						selectedCollection = ebookCollection
+			state.collections.forEach { ebookCollection ->
+				ebookCollectionSummary {
+					this.ebookCollection = ebookCollection
+					this.selected = ebookCollection == state.selectedCollection
+					this.onEbookCollectionSelected = {
+						setState {
+							selectedCollection = ebookCollection
+						}
 					}
 				}
+			}
+		}
+
+		state.selectedCollection?.let {
+			ebookCollection {
+				ebookCollection = it
 			}
 		}
 	}
