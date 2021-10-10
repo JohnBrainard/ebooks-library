@@ -16,32 +16,12 @@ fun RBuilder.ebooksApp(handler: Props.() -> Unit) = child(EbooksApp::class) {
 }
 
 class EbooksApp : RComponent<Props, EbooksAppState>() {
-	override fun EbooksAppState.init() {
-		collections = emptyList()
-
-		val scope = MainScope()
-		scope.launch {
-			val collections = getCollections()
-			setState {
-				this.collections = collections.collections.sortedBy { it.name }
-				this.selectedCollection = this.collections.firstOrNull()
-			}
-		}
-	}
-
 	override fun RBuilder.render() {
-		div {
-			attrs.id = "collections"
-
-			state.collections.forEach { ebookCollection ->
-				ebookCollectionSummary {
-					this.ebookCollection = ebookCollection
-					this.selected = ebookCollection == state.selectedCollection
-					this.onEbookCollectionSelected = {
-						setState {
-							selectedCollection = ebookCollection
-						}
-					}
+		ebookCollections {
+			selected = state.selectedCollection
+			onCollectionSelected = { collection ->
+				setState {
+					selectedCollection = collection
 				}
 			}
 		}
