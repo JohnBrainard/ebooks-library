@@ -23,7 +23,10 @@ data class FilesEbookId(
 	val path: Path
 ) : EbookId
 
-class FilesEbookCollectionRepository(private val path: Path) : EbookCollectionRepository {
+class FilesEbookCollectionRepository(path: String) : EbookCollectionRepository {
+
+	private val path = Path.of(path)
+
 	override fun readCollectionId(id: String): EbookCollectionId {
 		val collectionPath = path.resolve(id)
 		return FilesEbookCollectionId(id, collectionPath)

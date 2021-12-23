@@ -7,9 +7,11 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.util.*
+import org.koin.ktor.ext.inject
 
-fun Application.configureRouting(collectionsService: CollectionsService) {
+fun Application.configureRouting() {
+
+	val collectionsService: CollectionsService by inject()
 
 	routing {
 		get("/") {
