@@ -1,8 +1,12 @@
 pluginManagement {
     repositories {
-        maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
         mavenCentral()
+        gradlePluginPortal()
         maven { setUrl("https://plugins.gradle.org/m2/") }
+    }
+
+    plugins {
+        kotlin("jvm") version "1.6.10"
     }
 }
 

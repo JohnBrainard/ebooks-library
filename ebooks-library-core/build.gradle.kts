@@ -3,7 +3,7 @@ val logback_version: String by project
 val pdfbox_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm")
 }
 
 group = "dev.johnbrainard.ebooks"
