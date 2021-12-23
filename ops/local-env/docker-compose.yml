@@ -1,0 +1,13 @@
+version: '3'
+services:
+  ebooks-db:
+    container_name: ebooks-db
+    image: postgres:14.1-alpine
+    ports:
+      - "5432:5432"
+
+    environment:
+      POSTGRES_PASSWORD: password
+
+    volumes:
+      - ./ebooks-db/init/:/docker-entrypoint-initdb.d
