@@ -1,8 +1,6 @@
 package dev.johnbrainard.ebooks
 
 interface EbookCollectionRepository {
-	fun readCollectionId(id: String): EbookCollectionId
-	fun readEbookId(collectionId: EbookCollectionId, id: String): EbookId
-	fun listCollections(): Collection<EbookCollectionId>
+	fun listCollections(): Collection<EbookCollection>
 	fun getCollection(collectionId: EbookCollectionId): EbookCollection
 }
