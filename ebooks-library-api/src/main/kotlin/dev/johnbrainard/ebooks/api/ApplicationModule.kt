@@ -8,12 +8,18 @@ import dev.johnbrainard.ebooks.api.plugins.CollectionsService
 import dev.johnbrainard.ebooks.api.plugins.DefaultCollectionsService
 import dev.johnbrainard.ebooks.db.DbBookRepository
 import dev.johnbrainard.ebooks.db.DbCollectionRepository
+import dev.johnbrainard.ebooks.index.DefaultIndexer
+import dev.johnbrainard.ebooks.index.Indexer
 import dev.johnbrainard.ebooks.meta.PdfMetaExtractor
 import dev.johnbrainard.ebooks.meta.pdfbox.PdfBoxMetaExtractor
 import org.koin.dsl.module
 import javax.sql.DataSource
 
 val applicationModule = module {
+	single<Indexer>(createdAtStart = true) {
+		DefaultIndexer(getProperty("LIBRARY_PATH"), get())
+	}
+
 	single<EbookCollectionRepository> { DbCollectionRepository(get()) }
 	single<EbookMetaRepository> { DbBookRepository(get()) }
 

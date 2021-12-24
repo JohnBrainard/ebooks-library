@@ -4,8 +4,12 @@ import dev.johnbrainard.ebooks.meta.PdfMeta
 import dev.johnbrainard.ebooks.meta.PdfMetaExtractor
 import org.apache.pdfbox.Loader
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.Path
 
 class PdfBoxMetaExtractor : PdfMetaExtractor {
+	override fun extract(path: Path): PdfMeta = Files.newInputStream(path).use(this::extract)
+
 	override fun extract(inputStream: InputStream): PdfMeta {
 		val doc = inputStream.use {
 			Loader.loadPDF(inputStream)
