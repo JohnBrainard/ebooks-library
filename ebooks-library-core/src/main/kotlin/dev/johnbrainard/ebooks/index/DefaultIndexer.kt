@@ -27,9 +27,13 @@ class DefaultIndexer(
 		logger.info("scheduling indexing")
 		executor.submit {
 			logger.info("indexing started")
-			scanCollections()
-				.onEach { logger.debug("indexing entry: $it") }
-				.forEach { indexCollection(it) }
+			try {
+				scanCollections()
+					.onEach { logger.debug("indexing entry: $it") }
+					.forEach { indexCollection(it) }
+			} catch (ex: Exception) {
+				logger.error("uncaught exception encountered", ex)
+			}
 		}
 	}
 
@@ -67,17 +71,21 @@ class DefaultIndexer(
 		}
 
 		executor.submit {
-			val bookEntries = scanCollection(collectionEntry)
-			bookEntries.onEach { logger.debug("indexing book entry: $it") }
-				.forEach { book ->
-					ebookMetaRepository.saveBook {
-						collectionId = collection.id
-						name = book.name
-						title = book.title
-						path = book.path.toString()
-						authors.addAll(book.authors)
+			try {
+				val bookEntries = scanCollection(collectionEntry)
+				bookEntries.onEach { logger.debug("indexing book entry: $it") }
+					.forEach { book ->
+						ebookMetaRepository.saveBook {
+							collectionId = collection.id
+							name = book.name
+							title = book.title
+							path = book.path.toString()
+							authors.addAll(book.authors)
+						}
 					}
-				}
+			} catch (ex: Exception) {
+				logger.error("uncaught exception encountered", ex)
+			}
 		}
 	}
 
@@ -88,7 +96,7 @@ class DefaultIndexer(
 			path = fullPath.relativize(entryPath),
 			fullPath = entryPath,
 			name = entryPath.fileName.toString(),
-			title = pdfMeta.title,
+			title = pdfMeta.title ?: entryPath.fileName.toString(),
 			authors = pdfMeta.authors
 		)
 	}

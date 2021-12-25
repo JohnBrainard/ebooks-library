@@ -20,7 +20,9 @@ interface EbookMetaRepository {
 				id = null,
 				collectionId = requireNotNull(collectionId),
 				name = requireNotNull(name),
-				path = requireNotNull(path)
+				path = requireNotNull(path),
+				title = requireNotNull(title),
+				authors = authors.toSet()
 			)
 		}
 	}

@@ -10,7 +10,9 @@ data class Ebook(
 	val id: EbookId?,
 	val collectionId: EbookCollectionId,
 	val name: String,
-	val path: String
+	val path: String,
+	val title: String,
+	val authors: Set<String>
 )
 
 class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository {
@@ -21,7 +23,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		fun listBooks(collectionId: EbookCollectionId): Collection<Ebook> {
 			val statement = connection.prepareStatement(
 				"""
-					select book_id, collection_id, name, path
+					select book_id, collection_id, name, path, title, authors
 					from ebooks.books
 					where collection_id=?::uuid
 					order by name
@@ -56,8 +58,8 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 				setString(1, book.collectionId.toString())
 				setString(2, book.name)
 				setString(3, book.path)
-				setString(4, "title placeholder")
-				setArray(5, connection.createArrayOf("text", arrayOf("author placeholder")))
+				setString(4, book.title)
+				setArray(5, connection.createArrayOf("text", book.authors.toTypedArray()))
 			}
 
 			statement.executeUpdate()
@@ -98,13 +100,16 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		}
 	}
 
-
 	private fun ResultSet.readEbook(): Ebook {
+		val authors = getArray("authors").array as Array<String>
+
 		return Ebook(
 			id = EbookId(getString("book_id")),
 			collectionId = EbookCollectionId(getString("collection_id")),
 			name = getString("name"),
-			path = getString("path")
+			path = getString("path"),
+			title = getString("title"),
+			authors = authors.toSet()
 		)
 	}
 }

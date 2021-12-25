@@ -18,8 +18,9 @@ class PdfBoxMetaExtractor : PdfMetaExtractor {
 		val information = doc.documentInformation
 
 		return object : PdfMeta {
-			override val title: String
-				get() = information.title ?: ""
+			override val title: String?
+				get() = information.title
+					?.let(::sanitizeTitle)
 
 			override val authors: Set<String>
 				get() = information.author?.let { setOf(it) } ?: emptySet()
@@ -27,3 +28,5 @@ class PdfBoxMetaExtractor : PdfMetaExtractor {
 		}
 	}
 }
+
+private fun sanitizeTitle(title: String) = title.takeWhile { it != Char(0) }
