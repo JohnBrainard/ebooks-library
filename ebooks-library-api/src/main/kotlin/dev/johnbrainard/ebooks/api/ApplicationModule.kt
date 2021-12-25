@@ -17,7 +17,7 @@ import javax.sql.DataSource
 
 val applicationModule = module {
 	single<Indexer>(createdAtStart = true) {
-		DefaultIndexer(getProperty("LIBRARY_PATH"), get())
+		DefaultIndexer(getProperty("LIBRARY_PATH"), get(), get(), get())
 	}
 
 	single<EbookCollectionRepository> { DbCollectionRepository(get()) }

@@ -1,5 +1,7 @@
 package dev.johnbrainard.ebooks.index
 
+import dev.johnbrainard.ebooks.EbookCollectionRepository
+import dev.johnbrainard.ebooks.EbookMetaRepository
 import dev.johnbrainard.ebooks.logger
 import dev.johnbrainard.ebooks.meta.PdfMetaExtractor
 import java.nio.file.FileSystems
@@ -9,7 +11,12 @@ import java.util.concurrent.Executors
 import kotlin.io.path.isRegularFile
 import kotlin.streams.asSequence
 
-class DefaultIndexer(path: String, private val metaExtractor: PdfMetaExtractor) : Indexer {
+class DefaultIndexer(
+	path: String,
+	private val metaExtractor: PdfMetaExtractor,
+	private val collectionRepository: EbookCollectionRepository,
+	private val ebookMetaRepository: EbookMetaRepository
+) : Indexer {
 
 	private val libraryPath = Path.of(path)
 	private val executor = Executors.newFixedThreadPool(8)
@@ -22,13 +29,7 @@ class DefaultIndexer(path: String, private val metaExtractor: PdfMetaExtractor) 
 			logger.info("indexing started")
 			scanCollections()
 				.onEach { logger.debug("indexing entry: $it") }
-				.forEach { collectionEntry ->
-					executor.submit {
-						val bookEntries = scanCollection(collectionEntry)
-						bookEntries.onEach { logger.debug("indexing book entry: $it") }
-							.toList()
-					}
-				}
+				.forEach { indexCollection(it) }
 		}
 	}
 
@@ -56,6 +57,28 @@ class DefaultIndexer(path: String, private val metaExtractor: PdfMetaExtractor) 
 			}
 
 		return entries.asSequence()
+	}
+
+	private fun indexCollection(collectionEntry: CollectionEntry) {
+		logger.debug("indexing collection $collectionEntry")
+		val collection = collectionRepository.saveCollection {
+			name = collectionEntry.name
+			path = collectionEntry.path.toString()
+		}
+
+		executor.submit {
+			val bookEntries = scanCollection(collectionEntry)
+			bookEntries.onEach { logger.debug("indexing book entry: $it") }
+				.forEach { book ->
+					ebookMetaRepository.saveBook {
+						collectionId = collection.id
+						name = book.name
+						title = book.title
+						path = book.path.toString()
+						authors.addAll(book.authors)
+					}
+				}
+		}
 	}
 
 	private fun CollectionEntry.createBookEntry(entryPath: Path): BookEntry {
