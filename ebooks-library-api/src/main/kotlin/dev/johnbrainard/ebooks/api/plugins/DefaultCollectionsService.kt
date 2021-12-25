@@ -38,6 +38,8 @@ class DefaultCollectionsService(
 			entries = entries.map { ebook ->
 				CollectionEntryDto(
 					name = ebook.name,
+					title = ebook.title,
+					authors = ebook.authors,
 					url = call.url {
 						path("/collections/${collection.id}/${ebook.id}")
 					}
