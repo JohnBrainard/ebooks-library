@@ -23,16 +23,17 @@ repositories {
 }
 
 dependencies {
+	implementation("ch.qos.logback:logback-classic:$logback_version")
+	implementation("com.zaxxer:HikariCP:$hikari_version")
+	implementation("io.insert-koin:koin-ktor:$koin_version")
+	implementation("io.ktor:ktor-freemarker:$ktor_version")
+	implementation("io.ktor:ktor-jackson:$ktor_version")
 	implementation("io.ktor:ktor-server-core:$ktor_version")
 	implementation("io.ktor:ktor-server-netty:$ktor_version")
 	implementation("io.ktor:ktor-utils:$ktor_version")
-	implementation("io.ktor:ktor-jackson:$ktor_version")
-	implementation("io.insert-koin:koin-ktor:$koin_version")
-	implementation("ch.qos.logback:logback-classic:$logback_version")
 
 	implementation(project(":ebooks-library-core"))
 
-	implementation("com.zaxxer:HikariCP:$hikari_version")
 	runtimeOnly("org.postgresql:postgresql:$postgres_version")
 }
 

@@ -15,6 +15,7 @@ class DefaultCollectionsService(
 		val collections = ebookCollectionRepository.listCollections()
 			.map {
 				CollectionSummaryDto(
+					id = it.id.toString(),
 					name = it.name,
 					path = it.path,
 					url = call.url {
@@ -38,10 +39,14 @@ class DefaultCollectionsService(
 			entries = entries.map { ebook ->
 				CollectionEntryDto(
 					name = ebook.name,
+					path = ebook.path,
 					title = ebook.title,
 					authors = ebook.authors,
 					url = call.url {
 						path("/collections/${collection.id}/${ebook.id}")
+					},
+					downloadUrl = call.url {
+						path("/download/${collection.path}/${ebook.path}")
 					}
 				)
 			}
