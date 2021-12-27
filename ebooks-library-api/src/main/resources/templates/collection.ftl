@@ -8,7 +8,10 @@
 <body>
 
 <div id="header">
-    <h1><i class="icon large">&#128218;</i>eBook Library - ${collection.name}</h1>
+    <h1>
+        <a href="/" style="text-decoration: none"><i class="icon large">&#128218;</i></a>
+        eBook Library - ${collection.name}
+    </h1>
 </div>
 
 <div id="root">
