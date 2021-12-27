@@ -12,15 +12,16 @@
 </div>
 
 <div id="root">
-
-    <ul>
+    <div id="books">
         <#list collections as collection>
-            <ul>
-                <a href="/collection/${collection.id}">${collection.name}</a>
-            </ul>
+            <div class="book">
+                <span class="title">
+                    <i class="icon-sm">&#128218;</i>
+                    <a href="/collection/${collection.id}">${collection.name}</a>
+                </span>
+            </div>
         </#list>
-    </ul>
-
+    </div>
 </div>
 
 </body>

@@ -26,7 +26,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 					select book_id, collection_id, name, path, title, authors
 					from ebooks.books
 					where collection_id=?::uuid
-					order by name
+					order by title, name
 				""".trimIndent()
 			).apply {
 				setObject(1, collectionId.toString())

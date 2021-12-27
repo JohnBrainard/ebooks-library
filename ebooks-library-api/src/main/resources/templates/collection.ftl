@@ -8,23 +8,24 @@
 <body>
 
 <div id="header">
-    <h1><i class="icon large">&#128218;</i>eBook Library</h1>
+    <h1><i class="icon large">&#128218;</i>eBook Library - ${collection.name}</h1>
 </div>
 
 <div id="root">
-
     <h2>${collection.name}</h2>
 
-    <ul>
+    <div id="books">
         <#list collection.entries as entry>
-            <ul>
-                <a href="${entry.downloadUrl}">
-                    ${entry.title}
-                </a>
-            </ul>
+            <div class="book">
+                <span class="title">
+                    <a href="${entry.downloadUrl}">
+                        ${entry.title}
+                    </a>
+                </span>
+                <span class="fileName">${entry.name}</span>
+            </div>
         </#list>
-    </ul>
-
+    </div>
 </div>
 
 </body>
