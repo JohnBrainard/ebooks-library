@@ -29,4 +29,6 @@ class PdfBoxMetaExtractor : PdfMetaExtractor {
 	}
 }
 
-private fun sanitizeTitle(title: String) = title.takeWhile { it != Char(0) }
+private fun sanitizeTitle(title: String) = title
+	.takeWhile { it != Char(0) }
+	.ifBlank { null }
