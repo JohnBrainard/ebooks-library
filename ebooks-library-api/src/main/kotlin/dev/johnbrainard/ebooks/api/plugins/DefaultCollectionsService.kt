@@ -6,7 +6,9 @@ import dev.johnbrainard.ebooks.EbookCollectionRepository
 import dev.johnbrainard.ebooks.EbookMetaRepository
 import dev.johnbrainard.ebooks.db.Ebook
 import io.ktor.application.*
+import io.ktor.http.*
 import io.ktor.util.*
+import org.koin.core.parameter.emptyParametersHolder
 
 class DefaultCollectionsService(
 	private val ebookCollectionRepository: EbookCollectionRepository,
@@ -61,11 +63,15 @@ class DefaultCollectionsService(
 fun Ebook.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollection): CollectionEntryDto =
 	CollectionEntryDto(
 		name = name,
+		collectionName = collection.name,
 		path = path,
 		title = title,
 		authors = authors,
 		url = call.url {
 			path("/collections/${collectionId}/${id}")
+		},
+		collectionUrl = call.url {
+			path("/collection/${collectionId}")
 		},
 		downloadUrl = call.url {
 			path("/download/${collection.path}/${path}")

@@ -32,7 +32,11 @@
                         ${entry.title}
                     </a>
                 </span>
-                <span class="fileName">${entry.name}</span>
+                <span class="fileName">
+                    <a href="${entry.collectionUrl}">
+                        ${entry.collectionName}
+                    </a>
+                </span>
             </div>
         </#list>
     </div>
