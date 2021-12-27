@@ -29,6 +29,7 @@ i.icon-sm {
     font-size: 125%;
     padding: 0 10px
 }
+
 #collections {
     display: flex;
     flex-wrap: wrap;
@@ -76,4 +77,19 @@ i.icon-sm {
     min-width: 0px;
     white-space: nowrap;
     border-bottom: 1px solid #d0d0d0;
+}
+
+#search {
+    text-align: center;
+}
+
+#search input[type=text] {
+    width: 50%;
+    margin: .25em;
+    padding: .5em;
+}
+
+#search input[type=submit] {
+    margin: .25em;
+    padding: .25em;
 }

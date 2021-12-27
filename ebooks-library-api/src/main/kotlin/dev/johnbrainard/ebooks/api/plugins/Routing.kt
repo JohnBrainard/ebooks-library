@@ -43,6 +43,21 @@ fun Application.configureRouting() {
 			)
 		}
 
+		get("/search") {
+			val title = call.parameters["title"]
+
+			val resultsDto = collectionsService.search(call, title = title)
+			call.respond(
+				FreeMarkerContent(
+					"search.ftl",
+					mapOf(
+						"results" to resultsDto,
+						"query" to "$title"
+					)
+				)
+			)
+		}
+
 		get("/api/search") {
 			val title = call.parameters["title"]
 

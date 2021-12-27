@@ -3,29 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>eBooks Library</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
 <div id="header">
-    <h1><i class="icon large">&#128218;</i>eBook Library</h1>
+    <h1><i class="icon large">&#128218;</i>eBook Library - Search Books</h1>
 </div>
 
 <div id="root">
+    <h2>Search Results: ${query}</h2>
+
     <div id="search">
         <form method="get" action="/search">
             <input type="text" name="title"/>
-            <input type="submit" value="Search" />
+            <input type="submit" value="Search"/>
         </form>
     </div>
 
     <div id="books">
-        <#list collections as collection>
+        <#list results.results as entry>
             <div class="book">
                 <span class="title">
-                    <i class="icon-sm">&#128218;</i>
-                    <a href="/collection/${collection.id}">${collection.name}</a>
+                    <a href="${entry.downloadUrl}">
+                        ${entry.title}
+                    </a>
                 </span>
+                <span class="fileName">${entry.name}</span>
             </div>
         </#list>
     </div>
