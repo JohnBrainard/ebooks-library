@@ -50,7 +50,7 @@ class DbCollectionRepository(private val dataSource: DataSource) : EbookCollecti
 			}.single()
 		}
 
-		fun findCollectionByPath(path: String): EbookCollection {
+		fun findCollectionByPath(path: String): EbookCollection? {
 			val statement = connection.prepareStatement(
 				"""
 					select collection_id, name, path
@@ -65,7 +65,7 @@ class DbCollectionRepository(private val dataSource: DataSource) : EbookCollecti
 				while (resultSet.next()) {
 					yield(resultSet.readCollection())
 				}
-			}.single()
+			}.singleOrNull()
 		}
 
 		fun saveCollection(collection: EbookCollection) {
@@ -107,7 +107,13 @@ class DbCollectionRepository(private val dataSource: DataSource) : EbookCollecti
 
 		return withOperations { dbOperations ->
 			dbOperations.saveCollection(collectionEntry)
-			return@withOperations dbOperations.findCollectionByPath(collectionEntry.path)
+			return@withOperations dbOperations.findCollectionByPath(collectionEntry.path)!!
+		}
+	}
+
+	override fun existsAtPath(path: String): Boolean {
+		return withOperations { dbOperations ->
+			dbOperations.findCollectionByPath(path) != null
 		}
 	}
 

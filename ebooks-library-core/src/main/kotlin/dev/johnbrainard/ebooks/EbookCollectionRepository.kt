@@ -5,6 +5,7 @@ interface EbookCollectionRepository {
 	fun getCollection(collectionId: EbookCollectionId): EbookCollection
 
 	fun saveCollection(block: Builder.() -> Unit): EbookCollection
+	fun existsAtPath(path: String): Boolean
 
 	class Builder {
 		var name: String? = null

@@ -65,6 +65,11 @@ class DefaultIndexer(
 
 	private fun indexCollection(collectionEntry: CollectionEntry) {
 		logger.debug("indexing collection $collectionEntry")
+		if (collectionRepository.existsAtPath(collectionEntry.path.toString())) {
+			logger.info("collection at path ${collectionEntry.path} already exists; skipping")
+			return
+		}
+
 		val collection = collectionRepository.saveCollection {
 			name = collectionEntry.name
 			path = collectionEntry.path.toString()
