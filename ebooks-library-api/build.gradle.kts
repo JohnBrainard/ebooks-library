@@ -1,6 +1,7 @@
 val hikari_version: String by project
 val koin_version: String by project
 val kotlin_version: String by project
+val kotlinx_cli_version: String by project
 val ktor_version: String by project
 val logback_version: String by project
 val postgres_version: String by project
@@ -31,6 +32,7 @@ dependencies {
 	implementation("io.ktor:ktor-server-core:$ktor_version")
 	implementation("io.ktor:ktor-server-netty:$ktor_version")
 	implementation("io.ktor:ktor-utils:$ktor_version")
+	implementation("org.jetbrains.kotlinx:kotlinx-cli:$kotlinx_cli_version")
 
 	implementation(project(":ebooks-library-core"))
 
@@ -48,6 +50,7 @@ distributions {
 				rename("${rootProject.name}-jvm", rootProject.name)
 				into("lib")
 			}
+			duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 		}
 	}
 }
