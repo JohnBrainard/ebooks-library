@@ -26,4 +26,6 @@ interface EbookMetaRepository {
 			)
 		}
 	}
+
+	fun search(title: String? = null): Collection<Ebook>
 }

@@ -43,6 +43,13 @@ fun Application.configureRouting() {
 			)
 		}
 
+		get("/api/search") {
+			val title = call.parameters["title"]
+
+			val resultsDto = collectionsService.search(call, title = title)
+			call.respond(resultsDto)
+		}
+
 		static("/") {
 			resources("")
 		}

@@ -1,8 +1,10 @@
 package dev.johnbrainard.ebooks.api.plugins
 
+import dev.johnbrainard.ebooks.EbookCollection
 import dev.johnbrainard.ebooks.EbookCollectionId
 import dev.johnbrainard.ebooks.EbookCollectionRepository
 import dev.johnbrainard.ebooks.EbookMetaRepository
+import dev.johnbrainard.ebooks.db.Ebook
 import io.ktor.application.*
 import io.ktor.util.*
 
@@ -37,19 +39,35 @@ class DefaultCollectionsService(
 				path("/collection/${collection.id}")
 			},
 			entries = entries.map { ebook ->
-				CollectionEntryDto(
-					name = ebook.name,
-					path = ebook.path,
-					title = ebook.title,
-					authors = ebook.authors,
-					url = call.url {
-						path("/collections/${collection.id}/${ebook.id}")
-					},
-					downloadUrl = call.url {
-						path("/download/${collection.path}/${ebook.path}")
-					}
-				)
+				ebook.toCollectionEntryDto(call, ebookCollectionRepository.getCollection(ebook.collectionId))
 			}
 		)
 	}
+
+	override fun search(call: ApplicationCall, title: String?): SearchResultsDto {
+		val titleFilter = title
+			?.split(' ')
+			?.joinToString(" & ")
+
+		val results = metaRepository.search(title = titleFilter)
+			.map { it.toCollectionEntryDto(call, ebookCollectionRepository.getCollection(it.collectionId)) }
+
+		return SearchResultsDto(
+			results = results
+		)
+	}
 }
+
+fun Ebook.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollection): CollectionEntryDto =
+	CollectionEntryDto(
+		name = name,
+		path = path,
+		title = title,
+		authors = authors,
+		url = call.url {
+			path("/collections/${collectionId}/${id}")
+		},
+		downloadUrl = call.url {
+			path("/download/${collection.path}/${path}")
+		}
+	)

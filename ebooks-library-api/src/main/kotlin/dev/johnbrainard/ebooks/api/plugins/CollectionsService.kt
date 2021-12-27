@@ -7,4 +7,6 @@ import io.ktor.application.*
 interface CollectionsService {
 	fun listCollections(call: ApplicationCall): CollectionsDto
 	fun getCollection(call: ApplicationCall, collectionId: EbookCollectionId): CollectionDto
+	fun search(call: ApplicationCall, title: String? = null): SearchResultsDto
 }
+

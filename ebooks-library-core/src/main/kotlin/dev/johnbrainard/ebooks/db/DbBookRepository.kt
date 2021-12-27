@@ -64,6 +64,27 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 
 			statement.executeUpdate()
 		}
+
+		fun searchBooks(title: String? = null): Collection<Ebook> {
+			val statement = connection.prepareStatement(
+				"""
+					select book_id, collection_id, name, path, title, authors
+					from ebooks.books
+					where to_tsvector('english', title) @@ to_tsquery(?)
+					order by title, name
+				""".trimIndent()
+			).apply {
+				setString(1, title)
+			}
+
+			val resultSet = statement.executeQuery()
+
+			return sequence {
+				while (resultSet.next()) {
+					yield(resultSet.readEbook())
+				}
+			}.toList()
+		}
 	}
 
 	override fun listBooks(collectionId: EbookCollectionId): Collection<Ebook> {
@@ -80,6 +101,16 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		return withOperations { dbOperations ->
 			dbOperations.saveBook(ebook)
 			ebook
+		}
+	}
+
+	override fun search(title: String?): Collection<Ebook> {
+		if (title == null) {
+			return emptyList()
+		}
+
+		return withOperations { dbOperations ->
+			dbOperations.searchBooks(title = title)
 		}
 	}
 
