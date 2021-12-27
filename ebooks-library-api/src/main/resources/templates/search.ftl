@@ -28,8 +28,8 @@
         <#list results.results as entry>
             <div class="book">
                 <span class="title">
-                    <a href="${entry.downloadUrl}">
-                        ${entry.title}
+                    <a href="${entry.downloadUrl}" target="_blank">
+                        <i class="icon-sm">&#x1F4D6;</i> ${entry.title}
                     </a>
                 </span>
                 <span class="fileName">
