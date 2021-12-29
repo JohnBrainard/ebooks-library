@@ -86,6 +86,7 @@ class DefaultIndexer(
 							title = book.title
 							path = book.path.toString()
 							authors.addAll(book.authors)
+							contents.addAll(book.contents)
 						}
 					}
 			} catch (ex: Exception) {
@@ -102,7 +103,8 @@ class DefaultIndexer(
 			fullPath = entryPath,
 			name = entryPath.fileName.toString(),
 			title = pdfMeta.title ?: entryPath.fileName.toString(),
-			authors = pdfMeta.authors
+			authors = pdfMeta.authors,
+			contents = pdfMeta.contents
 		)
 	}
 }

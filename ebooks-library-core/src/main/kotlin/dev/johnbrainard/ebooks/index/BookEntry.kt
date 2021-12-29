@@ -7,5 +7,6 @@ data class BookEntry(
 	val fullPath: Path,
 	val name: String,
 	val title: String,
-	val authors: Set<String>
+	val authors: Set<String>,
+	val contents: List<String>
 )

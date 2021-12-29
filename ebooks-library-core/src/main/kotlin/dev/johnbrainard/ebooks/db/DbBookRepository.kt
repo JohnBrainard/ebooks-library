@@ -12,7 +12,8 @@ data class Ebook(
 	val name: String,
 	val path: String,
 	val title: String,
-	val authors: Set<String>
+	val authors: Set<String>,
+	val contents: List<String>
 )
 
 class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository {
@@ -23,7 +24,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		fun listBooks(collectionId: EbookCollectionId): Collection<Ebook> {
 			val statement = connection.prepareStatement(
 				"""
-					select book_id, collection_id, name, path, title, authors
+					select book_id, collection_id, name, path, title, authors, contents
 					from ebooks.books
 					where collection_id=?::uuid
 					order by title, name
@@ -47,8 +48,8 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 
 			val statement = connection.prepareStatement(
 				"""
-					insert into ebooks.books (collection_id, name, path, title, authors)
-					values (?::uuid, ?, ?, ?, ?)
+					insert into ebooks.books (collection_id, name, path, title, authors, contents)
+					values (?::uuid, ?, ?, ?, ?, ?)
 					on conflict (collection_id, path) do update
 					set name=excluded.name,
 						title=excluded.title,
@@ -60,21 +61,24 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 				setString(3, book.path)
 				setString(4, book.title)
 				setArray(5, connection.createArrayOf("text", book.authors.toTypedArray()))
+				setArray(6, connection.createArrayOf("text", book.contents.toTypedArray()))
 			}
 
 			statement.executeUpdate()
 		}
 
-		fun searchBooks(title: String? = null): Collection<Ebook> {
+		fun searchBooks(terms: String? = null): Collection<Ebook> {
 			val statement = connection.prepareStatement(
 				"""
-					select book_id, collection_id, name, path, title, authors
+					select book_id, collection_id, name, path, title, authors, contents
 					from ebooks.books
 					where to_tsvector('english', title) @@ to_tsquery(?)
+						or to_tsvector('english', text_array_to_string(contents, ' ', ' ')) @@ to_tsquery(?)
 					order by title, name
 				""".trimIndent()
 			).apply {
-				setString(1, title)
+				setString(1, terms)
+				setString(2, terms)
 			}
 
 			val resultSet = statement.executeQuery()
@@ -110,7 +114,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		}
 
 		return withOperations { dbOperations ->
-			dbOperations.searchBooks(title = title)
+			dbOperations.searchBooks(terms = title)
 		}
 	}
 
@@ -133,6 +137,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 
 	private fun ResultSet.readEbook(): Ebook {
 		val authors = getArray("authors").array as Array<String>
+		val contents = getArray("contents").array as Array<String>
 
 		return Ebook(
 			id = EbookId(getString("book_id")),
@@ -140,7 +145,8 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 			name = getString("name"),
 			path = getString("path"),
 			title = getString("title"),
-			authors = authors.toSet()
+			authors = authors.toSet(),
+			contents = contents.toList()
 		)
 	}
 }

@@ -14,6 +14,7 @@ interface EbookMetaRepository {
 		var path: String? = null
 		var title: String? = null
 		var authors: MutableList<String> = mutableListOf()
+		var contents: MutableList<String> = mutableListOf()
 
 		fun build(): Ebook {
 			return Ebook(
@@ -22,7 +23,8 @@ interface EbookMetaRepository {
 				name = requireNotNull(name),
 				path = requireNotNull(path),
 				title = requireNotNull(title),
-				authors = authors.toSet()
+				authors = authors.toSet(),
+				contents = contents.toList()
 			)
 		}
 	}
