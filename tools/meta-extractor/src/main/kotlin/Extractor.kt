@@ -14,6 +14,7 @@ class DefaultExtractor(private val metaExtractor: PdfMetaExtractor) : Extractor 
 			"""
 				Title: ${pdfMeta.title}
 				Authors: ${pdfMeta.authors.joinToString(",")}
+				Page Count: ${pdfMeta.pageCount}
 			""".trimIndent()
 		)
 

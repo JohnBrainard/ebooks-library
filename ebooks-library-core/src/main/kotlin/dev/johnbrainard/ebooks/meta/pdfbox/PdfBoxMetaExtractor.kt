@@ -30,8 +30,11 @@ class PdfBoxMetaExtractor : PdfMetaExtractor {
 			override val authors: Set<String>
 				get() = information.author?.let { setOf(it) } ?: emptySet()
 
+			override val pageCount: Int = doc.numberOfPages
 		}
 	}
+
+	private fun countPages(doc: PDDocument): Int = doc.numberOfPages
 
 	private fun extractContents(doc: PDDocument): List<String> {
 		val outline = doc.documentCatalog?.documentOutline
