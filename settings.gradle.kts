@@ -14,5 +14,6 @@ rootProject.name = "ebooks-library"
 
 include(
     "ebooks-library-api",
-    "ebooks-library-core"
+    "ebooks-library-core",
+    "tools:meta-extractor"
 )
