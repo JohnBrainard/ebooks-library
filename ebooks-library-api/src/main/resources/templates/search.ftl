@@ -1,20 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>eBooks Library</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
+<#import "layout/main.ftl" as layouts>
+<#import "layout/components.ftl" as components>
 
-<div id="header">
-    <h1>
-        <a href="/" style="text-decoration: none"><i class="icon large">&#128218;</i></a>
-        eBook Library - Search Books
-    </h1>
-</div>
-
-<div id="root">
+<@layouts.main title="Search Books">
     <h2>Search Results: ${query}</h2>
 
     <div id="search">
@@ -26,22 +13,7 @@
 
     <div id="books">
         <#list results.results as entry>
-            <div class="book">
-                <span class="title">
-                    <a href="${entry.downloadUrl}" target="_blank">
-                        <i class="icon-sm">&#x1F4D6;</i> ${entry.title}
-                    </a>
-                </span>
-                <span class="pageCount">${entry.pageCount} pages</span>
-                <span class="fileName">
-                    <a href="${entry.collectionUrl}">
-                        ${entry.collectionName}
-                    </a>
-                </span>
-            </div>
+            <@components.collectionEntry entry=entry showCollection=true />
         </#list>
     </div>
-</div>
-
-</body>
-</html>
+</@layouts.main>

@@ -1,21 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>eBooks Library</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+<#import "layout/main.ftl" as main>
 
-<div id="header">
-    <h1><i class="icon large">&#128218;</i>eBook Library</h1>
-</div>
-
-<div id="root">
+<@main.main>
     <div id="search">
         <form method="get" action="/search">
             <input type="text" name="title"/>
-            <input type="submit" value="Search" />
+            <input type="submit" value="Search"/>
         </form>
     </div>
 
@@ -29,7 +18,4 @@
             </div>
         </#list>
     </div>
-</div>
-
-</body>
-</html>
+</@main.main>
