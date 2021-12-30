@@ -3,16 +3,14 @@ FROM openjdk:17-alpine3.14 as builder
 COPY . /build/
 WORKDIR /build
 
-RUN apk add nodejs
-
-RUN ["./gradlew", "--stacktrace", "installDist"]
-RUN find . -name "*.bat"
+RUN ["./gradlew", "--stacktrace", "ebooks-library-api:installDist"]
 
 FROM openjdk:17-alpine3.14
-COPY --from=builder /build/api/build/install/api /app/
+
+RUN mkdir /app
+COPY --from=builder /build/ebooks-library-api/build/install/ebooks-library-api/ /app/
 
 EXPOSE 8080:8080
 WORKDIR /app/bin
-ENV LIBRARY_PATH=/library/
 
-CMD ["./api"]
+CMD ["./ebooks-library-api", "--port", "8000"]
