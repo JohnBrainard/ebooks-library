@@ -12,6 +12,7 @@ data class Ebook(
 	val name: String,
 	val path: String,
 	val title: String,
+	val pageCount: Int,
 	val authors: Set<String>,
 	val contents: List<String>
 )
@@ -24,7 +25,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		fun listBooks(collectionId: EbookCollectionId): Collection<Ebook> {
 			val statement = connection.prepareStatement(
 				"""
-					select book_id, collection_id, name, path, title, authors, contents
+					select book_id, collection_id, name, path, title, authors, contents, page_count
 					from ebooks.books
 					where collection_id=?::uuid
 					order by title, name
@@ -48,8 +49,8 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 
 			val statement = connection.prepareStatement(
 				"""
-					insert into ebooks.books (collection_id, name, path, title, authors, contents)
-					values (?::uuid, ?, ?, ?, ?, ?)
+					insert into ebooks.books (collection_id, name, path, title, authors, contents, page_count)
+					values (?::uuid, ?, ?, ?, ?, ?, ?)
 					on conflict (collection_id, path) do update
 					set name=excluded.name,
 						title=excluded.title,
@@ -62,6 +63,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 				setString(4, book.title)
 				setArray(5, connection.createArrayOf("text", book.authors.toTypedArray()))
 				setArray(6, connection.createArrayOf("text", book.contents.toTypedArray()))
+				setInt(7, book.pageCount)
 			}
 
 			statement.executeUpdate()
@@ -70,7 +72,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		fun searchBooks(terms: String? = null): Collection<Ebook> {
 			val statement = connection.prepareStatement(
 				"""
-					select book_id, collection_id, name, path, title, authors, contents
+					select book_id, collection_id, name, path, title, authors, contents, page_count
 					from ebooks.books
 					where to_tsvector('english', title) @@ to_tsquery(?)
 						or to_tsvector('english', text_array_to_string(contents, ' ', ' ')) @@ to_tsquery(?)
@@ -146,7 +148,8 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 			path = getString("path"),
 			title = getString("title"),
 			authors = authors.toSet(),
-			contents = contents.toList()
+			contents = contents.toList(),
+			pageCount = getInt("page_count")
 		)
 	}
 }

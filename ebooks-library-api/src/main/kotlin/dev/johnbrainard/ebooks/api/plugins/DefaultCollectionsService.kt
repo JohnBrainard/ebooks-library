@@ -67,6 +67,7 @@ fun Ebook.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollectio
 		path = path,
 		title = title,
 		authors = authors,
+		pageCount = pageCount,
 		url = call.url {
 			path("/collections/${collectionId}/${id}")
 		},

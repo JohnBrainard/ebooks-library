@@ -32,6 +32,7 @@
                         <i class="icon-sm">&#x1F4D6;</i> ${entry.title}
                     </a>
                 </span>
+                <span class="pageCount">${entry.pageCount} pages</span>
                 <span class="fileName">
                     <a href="${entry.collectionUrl}">
                         ${entry.collectionName}

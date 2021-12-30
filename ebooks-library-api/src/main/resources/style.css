@@ -65,7 +65,7 @@ i.icon-sm {
     flex-flow: row nowrap;
 }
 
-.title, .fileName {
+.title, .fileName, .pageCount, .authors {
     display: flex;
     flex-flow: row nowrap;
     flex-grow: 1;

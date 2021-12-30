@@ -8,6 +8,7 @@ data class CollectionEntryDto(
 	val downloadUrl: String,
 	val title: String?,
 	val path: String,
+	val pageCount: Int,
 	val authors: Collection<String>
 ) {
 	var meta: MetaDto? = null

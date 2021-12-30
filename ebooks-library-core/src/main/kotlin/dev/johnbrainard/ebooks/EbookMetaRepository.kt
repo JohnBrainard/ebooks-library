@@ -13,6 +13,7 @@ interface EbookMetaRepository {
 		var name: String? = null
 		var path: String? = null
 		var title: String? = null
+		var pageCount: Int? = null
 		var authors: MutableList<String> = mutableListOf()
 		var contents: MutableList<String> = mutableListOf()
 
@@ -23,6 +24,7 @@ interface EbookMetaRepository {
 				name = requireNotNull(name),
 				path = requireNotNull(path),
 				title = requireNotNull(title),
+				pageCount = requireNotNull(pageCount),
 				authors = authors.toSet(),
 				contents = contents.toList()
 			)

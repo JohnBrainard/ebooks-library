@@ -84,6 +84,7 @@ class DefaultIndexer(
 							collectionId = collection.id
 							name = book.name
 							title = book.title
+							pageCount = book.pageCount
 							path = book.path.toString()
 							authors.addAll(book.authors)
 							contents.addAll(book.contents)
@@ -104,7 +105,8 @@ class DefaultIndexer(
 			name = entryPath.fileName.toString(),
 			title = pdfMeta.title ?: entryPath.fileName.toString(),
 			authors = pdfMeta.authors,
-			contents = pdfMeta.contents
+			contents = pdfMeta.contents,
+			pageCount = pdfMeta.pageCount
 		)
 	}
 }

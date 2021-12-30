@@ -25,7 +25,10 @@
                         <i class="icon-sm">&#x1F4D6;</i> ${entry.title}
                     </a>
                 </span>
-                <span class="fileName">${entry.name}</span>
+                <span class="pageCount">${entry.pageCount} pages</span>
+                <span class="authors">
+                    <#list entry.authors as author>${author}</#list>
+                </span>
             </div>
         </#list>
     </div>
