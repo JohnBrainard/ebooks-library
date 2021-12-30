@@ -15,6 +15,10 @@ class LiquibaseDbMigrator(private val dataSource: DataSource) : DbMigrator {
 
 	private val logger = logger()
 
+	init {
+		migrate()
+	}
+
 	override fun migrate() {
 		logger.info("running database migrations")
 		dataSource.connection.use { conn ->

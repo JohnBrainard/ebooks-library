@@ -7,23 +7,23 @@ import dev.johnbrainard.ebooks.meta.PdfMetaExtractor
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
 import kotlin.io.path.isRegularFile
 import kotlin.streams.asSequence
 
 class DefaultIndexer(
 	path: String,
+	private val executor: ExecutorService,
 	private val metaExtractor: PdfMetaExtractor,
 	private val collectionRepository: EbookCollectionRepository,
 	private val ebookMetaRepository: EbookMetaRepository
 ) : Indexer {
 
 	private val libraryPath = Path.of(path)
-	private val executor = Executors.newFixedThreadPool(8)
 
 	private val logger = logger()
 
-	init {
+	override fun run() {
 		logger.info("scheduling indexing")
 		executor.submit {
 			logger.info("indexing started")

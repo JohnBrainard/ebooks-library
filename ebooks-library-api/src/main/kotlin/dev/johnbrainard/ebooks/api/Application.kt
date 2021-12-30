@@ -15,12 +15,11 @@ import io.ktor.server.netty.*
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
-import kotlinx.cli.required
 import org.koin.core.context.startKoin
 import org.koin.environmentProperties
 import org.slf4j.LoggerFactory
 
-inline fun <reified T : Any> logger() = LoggerFactory.getLogger(T::class.java)
+inline fun <reified T : Any> T.logger() = LoggerFactory.getLogger(T::class.java)
 
 fun main(args: Array<String>) {
 	val argParser = ArgParser("ebooks-library")
@@ -32,7 +31,11 @@ fun main(args: Array<String>) {
 
 	startKoin {
 		environmentProperties()
-		modules(applicationModule)
+		modules(
+			migratorModule,
+			indexerModule,
+			applicationModule
+		)
 	}
 
 	embeddedServer(Netty, port = port, host = "0.0.0.0") {
