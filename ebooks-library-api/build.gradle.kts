@@ -3,6 +3,7 @@ val koin_version: String by project
 val kotlin_version: String by project
 val kotlinx_cli_version: String by project
 val ktor_version: String by project
+val liquibase_version: String by project
 val logback_version: String by project
 val postgres_version: String by project
 
@@ -33,6 +34,7 @@ dependencies {
 	implementation("io.ktor:ktor-server-netty:$ktor_version")
 	implementation("io.ktor:ktor-utils:$ktor_version")
 	implementation("org.jetbrains.kotlinx:kotlinx-cli:$kotlinx_cli_version")
+	implementation("org.liquibase:liquibase-core:$liquibase_version")
 
 	implementation(project(":ebooks-library-core"))
 

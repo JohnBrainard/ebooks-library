@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+      http://www.liquibase.org/xml/ns/pro
+      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+
+
+    <changeSet id="1.0-text_array_to_string-function" author="john" context="schema">
+        <sql>
+            create function text_array_to_string(text[], text, text) returns text as
+                $$
+            select array_to_string($1, $2, $3)
+                       $$ language sql cost 1
+                immutable;
+        </sql>
+    </changeSet>
+
+    <changeSet id="1.0-ebooks-schema" author="john" context="schema">
+        <sql>
+            create schema ebooks;
+        </sql>
+    </changeSet>
+
+    <changeSet id="1.0-uuid-ossp-extension" author="johnb" context="schema">
+        <sql>
+            create
+            extension "uuid-ossp";
+        </sql>
+    </changeSet>
+
+    <changeSet id="1.0-collections-table" author="johnb" context="schema">
+        <sql>
+            create table ebooks.collections
+            (
+                collection_id uuid primary key default uuid_generate_v4(),
+                name          text        not null,
+                path          text unique not null
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="1.0-books-table" author="johnb" context="schema">
+        <sql>
+            create table ebooks.books
+            (
+                book_id       uuid primary key default uuid_generate_v4(),
+                collection_id uuid not null references ebooks.collections (collection_id),
+                name          text not null,
+                title         text not null,
+                authors       text[] not null default '{}',
+                path          text not null,
+                contents      text[] not null default '{}',
+                page_count    int,
+
+                constraint unq_ebooks_collection_id_path unique (collection_id, path)
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="1.0-title-ft-index" author="john" context="schema">
+        <sql>
+            create index idx_ts_title on ebooks.books using gin (to_tsvector('english', title));
+        </sql>
+    </changeSet>
+
+    <changeSet id="1.0-contents-ft-index" author="john" context="schema">
+        <sql>
+            create index idx_ts_contents on ebooks.books using gin (to_tsvector('english', text_array_to_string(contents, ' ', ' ')));
+        </sql>
+    </changeSet>
+</databaseChangeLog>
