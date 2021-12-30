@@ -16,10 +16,16 @@ fun Application.configureRouting() {
 	val collectionsService: CollectionsService by inject()
 
 	routing {
+		static("/") {
+			resources("")
+		}
+
+		static("/download") {
+			files(getProperty<String>("LIBRARY_PATH")!!)
+		}
+
 		get("/") {
 			val collections = collectionsService.listCollections(call)
-
-			val indexHtml = this::class.java.classLoader.getResource("index.html")!!.readText()
 
 			call.respond(
 				FreeMarkerContent(
@@ -83,14 +89,6 @@ fun Application.configureRouting() {
 
 			val resultsDto = collectionsService.search(call, title = title)
 			call.respond(resultsDto)
-		}
-
-		static("/") {
-			resources("")
-		}
-
-		static("/download") {
-			files(getProperty<String>("LIBRARY_PATH")!!)
 		}
 
 		get("/api/collections") {
