@@ -30,6 +30,7 @@ class DefaultCollectionsService(
 		val entries = metaRepository.listBooks(collectionId)
 
 		return CollectionDto(
+			id = collection.id.toString(),
 			name = collection.name,
 			url = call.url {
 				path("/collection/${collection.id}")
@@ -52,16 +53,26 @@ class DefaultCollectionsService(
 			results = results
 		)
 	}
+
+	override fun getEntry(call: ApplicationCall, entryId: EbookId): CollectionEntryDto {
+		val entry = metaRepository.getMeta(entryId)
+		val collection = ebookCollectionRepository.getCollection(entry.collectionId)
+
+		return entry.toCollectionEntryDto(call, collection)
+	}
 }
 
 fun EbookMeta.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollection): CollectionEntryDto =
 	CollectionEntryDto(
+		id = id.toString(),
 		name = name,
+		collectionId = collection.id.toString(),
 		collectionName = collection.name,
 		path = path,
 		title = title,
 		authors = authors,
 		pageCount = pageCount,
+		contents = contents,
 		url = call.url {
 			path("/collections/${collectionId}/${id}")
 		},

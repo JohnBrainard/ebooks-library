@@ -22,7 +22,10 @@
             <div class="book">
                 <span class="title">
                     <a href="${entry.downloadUrl}" target="_blank">
-                        <i class="icon-sm">&#x1F4D6;</i> ${entry.title}
+                        <i class="icon-sm">&#x1F4D6;</i>
+                    </a>
+                    <a href="/collection/${collection.id}/entries/${entry.id}">
+                        ${entry.title}
                     </a>
                 </span>
                 <span class="pageCount">${entry.pageCount} pages</span>

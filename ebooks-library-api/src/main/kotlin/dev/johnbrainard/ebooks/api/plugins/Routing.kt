@@ -1,6 +1,7 @@
 package dev.johnbrainard.ebooks.api.plugins
 
 import dev.johnbrainard.ebooks.EbookCollectionId
+import dev.johnbrainard.ebooks.EbookId
 import io.ktor.application.*
 import io.ktor.freemarker.*
 import io.ktor.http.content.*
@@ -39,6 +40,25 @@ fun Application.configureRouting() {
 				FreeMarkerContent(
 					"collection.ftl",
 					mapOf("collection" to collection)
+				)
+			)
+		}
+
+		get("/collection/{collection}/entries/{entry}") {
+			val collectionId = call.parameters["collection"]
+				?.let { EbookCollectionId(it) }
+				?: throw IllegalStateException()
+
+			val entryId = call.parameters["entry"]
+				?.let { EbookId(it) }
+				?: throw IllegalStateException()
+
+			val entry = collectionsService.getEntry(call, entryId)
+
+			call.respond(
+				FreeMarkerContent(
+					"entry.ftl",
+					mapOf("entry" to entry)
 				)
 			)
 		}

@@ -31,6 +31,26 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 			}.toList()
 		}
 
+		fun getBook(bookId: EbookId): EbookMeta {
+			val statement = connection.prepareStatement(
+				"""
+					select book_id, collection_id, name, path, title, authors, contents, page_count
+					from ebooks.books
+					where book_id=?::uuid
+					order by title, name
+				""".trimIndent()
+			).apply {
+				setObject(1, bookId.toString())
+			}
+
+			val results = statement.executeQuery()
+			return sequence {
+				while (results.next()) {
+					yield(results.readEbook())
+				}
+			}.single()
+		}
+
 		fun saveBook(book: EbookMeta) {
 			if (book.id != null) {
 				throw EbooksException("use updateBook instead when saving with a known id")
@@ -110,7 +130,9 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 	}
 
 	override fun getMeta(ebookId: EbookId): EbookMeta {
-		TODO("Not yet implemented")
+		return withOperations { dbOperations ->
+			dbOperations.getBook(ebookId)
+		}
 	}
 
 	private fun <T> withOperations(block: (DbOperations) -> T): T {
