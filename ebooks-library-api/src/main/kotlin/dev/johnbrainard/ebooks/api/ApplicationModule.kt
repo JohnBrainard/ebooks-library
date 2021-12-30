@@ -44,6 +44,7 @@ val applicationModule = module {
 			maximumPoolSize = 3
 			isAutoCommit = false
 			transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+			schema = "public"
 			validate()
 		}
 	}
