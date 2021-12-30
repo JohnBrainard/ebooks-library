@@ -1,12 +1,10 @@
 package dev.johnbrainard.ebooks
 
-import dev.johnbrainard.ebooks.db.Ebook
-
 interface EbookMetaRepository {
 	fun getMeta(ebookId: EbookId): EbookMeta
-	fun listBooks(collectionId: EbookCollectionId): Collection<Ebook>
+	fun listBooks(collectionId: EbookCollectionId): Collection<EbookMeta>
 
-	fun saveBook(block: Builder.() -> Unit): Ebook
+	fun saveBook(block: Builder.() -> Unit): EbookMeta
 
 	class Builder {
 		var collectionId: EbookCollectionId? = null
@@ -17,8 +15,8 @@ interface EbookMetaRepository {
 		var authors: MutableList<String> = mutableListOf()
 		var contents: MutableList<String> = mutableListOf()
 
-		fun build(): Ebook {
-			return Ebook(
+		fun build(): EbookMeta {
+			return EbookMeta(
 				id = null,
 				collectionId = requireNotNull(collectionId),
 				name = requireNotNull(name),
@@ -31,5 +29,5 @@ interface EbookMetaRepository {
 		}
 	}
 
-	fun search(title: String? = null): Collection<Ebook>
+	fun search(title: String? = null): Collection<EbookMeta>
 }

@@ -1,14 +1,8 @@
 package dev.johnbrainard.ebooks.api.plugins
 
-import dev.johnbrainard.ebooks.EbookCollection
-import dev.johnbrainard.ebooks.EbookCollectionId
-import dev.johnbrainard.ebooks.EbookCollectionRepository
-import dev.johnbrainard.ebooks.EbookMetaRepository
-import dev.johnbrainard.ebooks.db.Ebook
+import dev.johnbrainard.ebooks.*
 import io.ktor.application.*
-import io.ktor.http.*
 import io.ktor.util.*
-import org.koin.core.parameter.emptyParametersHolder
 
 class DefaultCollectionsService(
 	private val ebookCollectionRepository: EbookCollectionRepository,
@@ -60,7 +54,7 @@ class DefaultCollectionsService(
 	}
 }
 
-fun Ebook.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollection): CollectionEntryDto =
+fun EbookMeta.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollection): CollectionEntryDto =
 	CollectionEntryDto(
 		name = name,
 		collectionName = collection.name,
