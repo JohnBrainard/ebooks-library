@@ -1,7 +1,7 @@
 <#import "layout/main.ftl" as layouts>
 <#import "layout/components.ftl" as components>
 
-<@layouts.main title="Search Books">
+<@layouts.main title="Search Books" active="search">
     <h2>Search Results: ${query}</h2>
 
     <div id="search">

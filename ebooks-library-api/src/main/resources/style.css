@@ -93,3 +93,22 @@ i.icon-sm {
     margin: .25em;
     padding: .25em;
 }
+
+div.nav {
+    text-align: center;
+}
+
+ul.nav li {
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+}
+
+ul.nav li.active {
+    font-weight: bold;
+}
+
+ul.nav a {
+    text-decoration: none;
+    color: white;
+}

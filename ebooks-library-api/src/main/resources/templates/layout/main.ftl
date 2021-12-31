@@ -6,7 +6,15 @@
     </#if>
 </#function>
 
-<#macro main title="">
+<#function getActiveStatus(navId, active)>
+    <#if navId == active>
+        <#return "active" />
+    <#else>
+        <#return "" />
+    </#if>
+</#function>
+
+<#macro main title="" active="collections">
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -21,6 +29,14 @@
             <a href="/" style="text-decoration: none"><i class="icon large">&#128218;</i></a>
             ${getTitle(title)}
         </h1>
+
+        <div class="nav">
+            <ul class="nav">
+                <li class="${getActiveStatus("collections", active)}">
+                    <a href="/">Collections</a>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div id="root">

@@ -1,6 +1,6 @@
 <#import "layout/main.ftl" as main>
 
-<@main.main>
+<@main.main active="collections">
     <div id="search">
         <form method="get" action="/search">
             <input type="text" name="title"/>

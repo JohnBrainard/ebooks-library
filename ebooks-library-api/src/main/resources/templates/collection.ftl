@@ -1,7 +1,7 @@
 <#import "layout/main.ftl" as main>
 <#import "layout/components.ftl" as components>
 
-<@main.main title="${collection.name}">
+<@main.main title="${collection.name}" active="collections">
     <h2>${collection.name}</h2>
 
     <div id="books">
