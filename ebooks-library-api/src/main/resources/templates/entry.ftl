@@ -1,20 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>eBooks Library</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
+<#import "layout/main.ftl" as main>
+<#import "layout/components.ftl" as components>
 
-<div id="header">
-    <h1>
-        <a href="/" style="text-decoration: none"><i class="icon large">&#128218;</i></a>
-        eBook Library - ${entry.title}
-    </h1>
-</div>
-
-<div id="root">
+<@main.main title="${entry.title}" active="collections">
     <h2>${entry.title}</h2>
 
     <div id="book">
@@ -32,7 +19,4 @@
 
         <h3><a href="${entry.downloadUrl}" target="_blank">${entry.path}</a></h3>
     </div>
-</div>
-
-</body>
-</html>
+</@main.main>
