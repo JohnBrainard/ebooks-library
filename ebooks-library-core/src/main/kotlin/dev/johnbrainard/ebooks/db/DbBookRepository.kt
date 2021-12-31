@@ -6,12 +6,12 @@ import java.sql.ResultSet
 import java.sql.SQLException
 import javax.sql.DataSource
 
-class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository {
+class DbBookRepository(private val dataSource: DataSource) : EbookRepository {
 
 	private val logger = logger()
 
 	private inner class DbOperations(val connection: Connection) {
-		fun listBooks(collectionId: EbookCollectionId): Collection<EbookMeta> {
+		fun listBooks(collectionId: EbookCollectionId): Collection<Ebook> {
 			val statement = connection.prepareStatement(
 				"""
 					select book_id, collection_id, name, path, title, authors, contents, page_count
@@ -31,7 +31,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 			}.toList()
 		}
 
-		fun getBook(bookId: EbookId): EbookMeta {
+		fun getBook(bookId: EbookId): Ebook {
 			val statement = connection.prepareStatement(
 				"""
 					select book_id, collection_id, name, path, title, authors, contents, page_count
@@ -51,7 +51,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 			}.single()
 		}
 
-		fun saveBook(book: EbookMeta) {
+		fun saveBook(book: Ebook) {
 			if (book.id != null) {
 				throw EbooksException("use updateBook instead when saving with a known id")
 			}
@@ -78,7 +78,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 			statement.executeUpdate()
 		}
 
-		fun searchBooks(terms: String? = null): Collection<EbookMeta> {
+		fun searchBooks(terms: String? = null): Collection<Ebook> {
 			val statement = connection.prepareStatement(
 				"""
 					select book_id, collection_id, name, path, title, authors, contents, page_count
@@ -102,14 +102,14 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		}
 	}
 
-	override fun listBooks(collectionId: EbookCollectionId): Collection<EbookMeta> {
+	override fun listBooks(collectionId: EbookCollectionId): Collection<Ebook> {
 		return withOperations { dbOperations ->
 			dbOperations.listBooks(collectionId)
 		}
 	}
 
-	override fun saveBook(block: EbookMetaRepository.Builder.() -> Unit): EbookMeta {
-		val ebook = EbookMetaRepository.Builder()
+	override fun saveBook(block: EbookRepository.Builder.() -> Unit): Ebook {
+		val ebook = EbookRepository.Builder()
 			.apply(block)
 			.build()
 
@@ -119,7 +119,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		}
 	}
 
-	override fun search(title: String?): Collection<EbookMeta> {
+	override fun search(title: String?): Collection<Ebook> {
 		if (title == null) {
 			return emptyList()
 		}
@@ -129,7 +129,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		}
 	}
 
-	override fun getMeta(ebookId: EbookId): EbookMeta {
+	override fun getMeta(ebookId: EbookId): Ebook {
 		return withOperations { dbOperations ->
 			dbOperations.getBook(ebookId)
 		}
@@ -148,11 +148,11 @@ class DbBookRepository(private val dataSource: DataSource) : EbookMetaRepository
 		}
 	}
 
-	private fun ResultSet.readEbook(): EbookMeta {
+	private fun ResultSet.readEbook(): Ebook {
 		val authors = getArray("authors").array as Array<String>
 		val contents = getArray("contents").array as Array<String>
 
-		return EbookMeta(
+		return Ebook(
 			id = EbookId(getString("book_id")),
 			collectionId = EbookCollectionId(getString("collection_id")),
 			name = getString("name"),

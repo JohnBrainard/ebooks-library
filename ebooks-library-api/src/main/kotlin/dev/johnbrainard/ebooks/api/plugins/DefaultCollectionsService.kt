@@ -6,7 +6,7 @@ import io.ktor.util.*
 
 class DefaultCollectionsService(
 	private val ebookCollectionRepository: EbookCollectionRepository,
-	private val metaRepository: EbookMetaRepository
+	private val metaRepository: EbookRepository
 ) : CollectionsService {
 
 	override fun listCollections(call: ApplicationCall): CollectionsDto {
@@ -62,7 +62,7 @@ class DefaultCollectionsService(
 	}
 }
 
-fun EbookMeta.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollection): CollectionEntryDto =
+fun Ebook.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollection): CollectionEntryDto =
 	CollectionEntryDto(
 		id = id.toString(),
 		name = name,

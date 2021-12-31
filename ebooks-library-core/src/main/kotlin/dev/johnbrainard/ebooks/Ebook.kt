@@ -1,6 +1,6 @@
 package dev.johnbrainard.ebooks
 
-data class EbookMeta(
+data class Ebook(
 	val id: EbookId?,
 	val collectionId: EbookCollectionId,
 	val name: String,

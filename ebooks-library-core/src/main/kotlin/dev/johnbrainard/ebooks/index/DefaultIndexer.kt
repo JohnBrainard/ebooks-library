@@ -1,7 +1,7 @@
 package dev.johnbrainard.ebooks.index
 
 import dev.johnbrainard.ebooks.EbookCollectionRepository
-import dev.johnbrainard.ebooks.EbookMetaRepository
+import dev.johnbrainard.ebooks.EbookRepository
 import dev.johnbrainard.ebooks.logger
 import dev.johnbrainard.ebooks.meta.PdfMetaExtractor
 import java.nio.file.FileSystems
@@ -16,7 +16,7 @@ class DefaultIndexer(
 	private val executor: ExecutorService,
 	private val metaExtractor: PdfMetaExtractor,
 	private val collectionRepository: EbookCollectionRepository,
-	private val ebookMetaRepository: EbookMetaRepository
+	private val ebookRepository: EbookRepository
 ) : Indexer {
 
 	private val libraryPath = Path.of(path)
@@ -80,7 +80,7 @@ class DefaultIndexer(
 				val bookEntries = scanCollection(collectionEntry)
 				bookEntries.onEach { logger.debug("indexing book entry: $it") }
 					.forEach { book ->
-						ebookMetaRepository.saveBook {
+						ebookRepository.saveBook {
 							collectionId = collection.id
 							name = book.name
 							title = book.title
