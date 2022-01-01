@@ -11,6 +11,7 @@ interface CollectionsService {
 	fun getCollection(call: ApplicationCall, collectionId: EbookCollectionId): CollectionDto
 	fun search(call: ApplicationCall, title: String? = null): SearchResultsDto
 	fun getEntry(call: ApplicationCall, entryId: EbookId): CollectionEntryDto
+	fun getListsForEntry(entryId: EbookId): List<ListDto>
 
 	fun getLists(): ListsDto
 	fun getList(call: ApplicationCall, listId: EbookListId): ListDto

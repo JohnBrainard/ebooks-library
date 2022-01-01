@@ -64,11 +64,15 @@ fun Application.configureRouting() {
 				?: throw IllegalStateException()
 
 			val entry = collectionsService.getEntry(call, entryId)
+			val lists = collectionsService.getListsForEntry(entryId)
 
 			call.respond(
 				FreeMarkerContent(
 					"entry.ftl",
-					mapOf("entry" to entry)
+					mapOf(
+						"entry" to entry,
+						"listsContainingBook" to lists
+					)
 				)
 			)
 		}

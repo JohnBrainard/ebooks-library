@@ -74,6 +74,28 @@ class DbListRepository(private val dataSource: DataSource) : EbookListRepository
 
 			statement.executeUpdate()
 		}
+
+		fun findListsWithBook(bookId: EbookId): List<EbookList> {
+			val statement = connection.prepareStatement(
+				"""
+					select lists.list_id,
+					       lists.name as list_name
+					from ebooks.lists
+					         left outer join ebooks.list_entries using (list_id)
+					where list_entries.book_id=?::uuid
+					order by lists.name, lists.created_at desc, list_entries.created_at desc										
+				""".trimIndent()
+			).apply {
+				setString(1, bookId.toString())
+			}
+
+			val results = statement.executeQuery()
+			return sequence {
+				while (results.next()) {
+					yield(results.readListSummary())
+				}
+			}.toList()
+		}
 	}
 
 	override fun getLists(): List<EbookList> {
@@ -87,7 +109,9 @@ class DbListRepository(private val dataSource: DataSource) : EbookListRepository
 	}
 
 	override fun findListsContainingBook(bookId: EbookId): List<EbookList> {
-		TODO("Not yet implemented")
+		return withOperations { dbOperations ->
+			dbOperations.findListsWithBook(bookId)
+		}
 	}
 
 	override fun saveList(list: EbookList) {
@@ -116,6 +140,13 @@ class DbListRepository(private val dataSource: DataSource) : EbookListRepository
 				name = getString("list_name")
 			),
 			ebookId = getString("book_id")?.let { EbookId(it) }
+		)
+	}
+
+	private fun ResultSet.readListSummary(): EbookList {
+		return EbookList(
+			id = EbookListId(getString("list_id")),
+			name = getString("list_name")
 		)
 	}
 

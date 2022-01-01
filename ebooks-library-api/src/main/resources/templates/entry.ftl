@@ -18,5 +18,12 @@
         </ul>
 
         <h3><a href="${entry.downloadUrl}" target="_blank">${entry.path}</a></h3>
+
+        <h2>Lists</h2>
+        <ul>
+            <#list listsContainingBook as list>
+                <li>${list.name}</li>
+            </#list>
+        </ul>
     </div>
 </@main.main>

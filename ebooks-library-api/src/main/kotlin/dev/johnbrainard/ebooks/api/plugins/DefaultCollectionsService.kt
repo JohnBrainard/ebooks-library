@@ -95,6 +95,17 @@ class DefaultCollectionsService(
 
 		return entry.toCollectionEntryDto(call, collection)
 	}
+
+	override fun getListsForEntry(entryId: EbookId): List<ListDto> {
+		return listRepository.findListsContainingBook(entryId)
+			.map {
+				ListDto(
+					id = it.id.toString(),
+					name = it.name,
+					entryCount = 0
+				)
+			}
+	}
 }
 
 fun Ebook.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollection): CollectionEntryDto =
