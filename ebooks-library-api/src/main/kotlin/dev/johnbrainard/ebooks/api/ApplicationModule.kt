@@ -3,11 +3,13 @@ package dev.johnbrainard.ebooks.api
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.johnbrainard.ebooks.EbookCollectionRepository
+import dev.johnbrainard.ebooks.EbookListRepository
 import dev.johnbrainard.ebooks.EbookRepository
 import dev.johnbrainard.ebooks.api.plugins.CollectionsService
 import dev.johnbrainard.ebooks.api.plugins.DefaultCollectionsService
 import dev.johnbrainard.ebooks.db.DbBookRepository
 import dev.johnbrainard.ebooks.db.DbCollectionRepository
+import dev.johnbrainard.ebooks.db.DbListRepository
 import dev.johnbrainard.ebooks.meta.PdfMetaExtractor
 import dev.johnbrainard.ebooks.meta.pdfbox.PdfBoxMetaExtractor
 import org.koin.dsl.module
@@ -19,9 +21,10 @@ import javax.sql.DataSource
 val applicationModule = module {
 	single<EbookCollectionRepository> { DbCollectionRepository(get()) }
 	single<EbookRepository> { DbBookRepository(get()) }
+	single<EbookListRepository> { DbListRepository(get()) }
 
 	single<PdfMetaExtractor> { PdfBoxMetaExtractor() }
-	single<CollectionsService> { DefaultCollectionsService(get(), get()) }
+	single<CollectionsService> { DefaultCollectionsService(get(), get(), get()) }
 
 	single<DataSource> {
 		HikariDataSource(get())

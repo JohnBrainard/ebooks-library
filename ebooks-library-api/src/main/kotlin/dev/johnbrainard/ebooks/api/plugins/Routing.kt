@@ -2,6 +2,7 @@ package dev.johnbrainard.ebooks.api.plugins
 
 import dev.johnbrainard.ebooks.EbookCollectionId
 import dev.johnbrainard.ebooks.EbookId
+import dev.johnbrainard.ebooks.EbookListId
 import io.ktor.application.*
 import io.ktor.freemarker.*
 import io.ktor.http.content.*
@@ -65,6 +66,34 @@ fun Application.configureRouting() {
 				FreeMarkerContent(
 					"entry.ftl",
 					mapOf("entry" to entry)
+				)
+			)
+		}
+
+		get("/lists") {
+			val listsDto = collectionsService.getLists()
+
+			call.respond(
+				FreeMarkerContent(
+					"lists.ftl",
+					mapOf("lists" to listsDto)
+				)
+			)
+		}
+
+		get("/lists/{list}") {
+			val listId = call.parameters["list"]
+				?.let { EbookListId(it) }
+				?: throw IllegalStateException()
+
+			val list = collectionsService.getList(call, listId)
+
+			call.respond(
+				FreeMarkerContent(
+					"list.ftl",
+					mapOf(
+						"list" to list
+					)
 				)
 			)
 		}

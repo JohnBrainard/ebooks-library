@@ -35,6 +35,9 @@
                 <li class="${getActiveStatus("collections", active)}">
                     <a href="/">Collections</a>
                 </li>
+                <li class="${getActiveStatus("lists", active)}">
+                    <a href="/lists">Lists</a>
+                </li>
             </ul>
         </div>
     </div>

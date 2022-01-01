@@ -6,7 +6,8 @@ import io.ktor.util.*
 
 class DefaultCollectionsService(
 	private val ebookCollectionRepository: EbookCollectionRepository,
-	private val metaRepository: EbookRepository
+	private val metaRepository: EbookRepository,
+	private val listRepository: EbookListRepository
 ) : CollectionsService {
 
 	override fun listCollections(call: ApplicationCall): CollectionsDto {
@@ -38,6 +39,36 @@ class DefaultCollectionsService(
 			entries = entries.map { ebook ->
 				ebook.toCollectionEntryDto(call, ebookCollectionRepository.getCollection(ebook.collectionId))
 			}
+		)
+	}
+
+	override fun getLists(): ListsDto {
+		val lists = listRepository.getLists()
+
+		return ListsDto(
+			lists = lists.map {
+				ListDto(
+					id = it.id.toString(),
+					name = it.name,
+					entryCount = it.entries.size
+				)
+			}
+		)
+	}
+
+	override fun getList(call: ApplicationCall, listId: EbookListId): ListDto {
+		val list = listRepository.getList(listId)
+		val entries = list.entries.map {
+			metaRepository.getMeta(it.bookId)
+		}.map {
+			it.toCollectionEntryDto(call, ebookCollectionRepository.getCollection(it.collectionId))
+		}
+
+		return ListDto(
+			id = list.id.toString(),
+			name = list.name,
+			entryCount = list.entries.size,
+			entries = entries
 		)
 	}
 

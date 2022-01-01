@@ -72,4 +72,33 @@
             create index idx_ts_contents on ebooks.books using gin (to_tsvector('english', text_array_to_string(contents, ' ', ' ')));
         </sql>
     </changeSet>
+
+    <changeSet id="1.0-lists-table" author="john" context="schema">
+        <sql>
+            create table ebooks.lists
+            (
+                list_id    uuid primary key         default uuid_generate_v4(),
+                name       text not null,
+                created_at timestamp with time zone default now(),
+                updated_at timestamp with time zone default now(),
+
+                constraint unq_list_name unique (name)
+            )
+        </sql>
+    </changeSet>
+
+    <changeSet id="1.0-list-entries-table" author="john" context="schema">
+        <sql>
+            create table ebooks.list_entries
+            (
+                list_entry_id serial primary key,
+                list_id       uuid not null references ebooks.lists (list_id),
+                book_id       uuid not null references ebooks.books (book_id),
+                created_at    timestamp with time zone default now(),
+                updated_at    timestamp with time zone default now(),
+
+                constraint unq_list_entry unique (list_id, book_id)
+            )
+        </sql>
+    </changeSet>
 </databaseChangeLog>
