@@ -20,10 +20,29 @@
         <h3><a href="${entry.downloadUrl}" target="_blank">${entry.path}</a></h3>
 
         <h2>Lists</h2>
-        <ul>
-            <#list listsContainingBook as list>
-                <li>${list.name}</li>
-            </#list>
-        </ul>
+        <#list listsContainingBook>
+            <h3>This book is in the following list(s)...</h3>
+            <ul>
+                <#items as list>
+                    <li>
+                        <a href="/lists/${list.id}">${list.name}</a>
+                    </li>
+                </#items>
+            </ul>
+        <#else>
+            <h3>This book isn't in any lists yet.</h3>
+        </#list>
+
+        <#list lists>
+            <h3>Add to list...</h3>
+            <form method="post" action="/collection/${entry.collectionId}/entries/${entry.id}/lists">
+                <select name="list">
+                    <#items  as list>
+                        <option value="${list.id}">${list.name}</option>
+                    </#items>
+                </select>
+                <input type="submit" value="Add to list">
+            </form>
+        </#list>
     </div>
 </@main.main>

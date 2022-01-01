@@ -12,7 +12,6 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.getProperty
 import org.koin.ktor.ext.inject
-import java.lang.IllegalStateException
 
 fun Application.configureRouting() {
 
@@ -65,16 +64,39 @@ fun Application.configureRouting() {
 
 			val entry = collectionsService.getEntry(call, entryId)
 			val lists = collectionsService.getListsForEntry(entryId)
+			val allLists = collectionsService.getLists()
+				.lists
+				.filter { list -> !lists.any { it.id == list.id } }
 
 			call.respond(
 				FreeMarkerContent(
 					"entry.ftl",
 					mapOf(
 						"entry" to entry,
-						"listsContainingBook" to lists
+						"listsContainingBook" to lists,
+						"lists" to allLists
 					)
 				)
 			)
+		}
+
+		post("/collection/{collection}/entries/{entry}/lists") {
+			val form = call.receiveParameters()
+			val listId = form["list"]
+				?.let { EbookListId(it) }
+				?: throw IllegalStateException("list is not supplied")
+
+			val collectionId = call.parameters["collection"]
+				?.let { EbookCollectionId(it) }
+				?: throw java.lang.IllegalStateException()
+
+			val bookId = call.parameters["entry"]
+				?.let { EbookId(it) }
+				?: throw IllegalStateException()
+
+			collectionsService.addBookToList(bookId, listId)
+
+			call.respondRedirect("/collection/$collectionId/entries/$bookId", permanent = true)
 		}
 
 		get("/lists") {

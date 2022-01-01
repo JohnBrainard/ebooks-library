@@ -96,6 +96,21 @@ class DbListRepository(private val dataSource: DataSource) : EbookListRepository
 				}
 			}.toList()
 		}
+
+		fun addBookToList(listId: EbookListId, bookId: EbookId) {
+			val statement = connection.prepareStatement(
+				"""
+					insert into ebooks.list_entries (list_id, book_id)
+					values (?::uuid, ?::uuid)
+					on conflict (list_id, book_id) do nothing
+				""".trimIndent()
+			).apply {
+				setString(1, listId.toString())
+				setString(2, bookId.toString())
+			}
+
+			statement.executeUpdate()
+		}
 	}
 
 	override fun getLists(): List<EbookList> {
@@ -117,6 +132,12 @@ class DbListRepository(private val dataSource: DataSource) : EbookListRepository
 	override fun saveList(list: EbookList) {
 		withOperations { dbOperations ->
 			dbOperations.saveList(list)
+		}
+	}
+
+	override fun addBookToList(listId: EbookListId, bookId: EbookId) {
+		withOperations { dbOperations ->
+			dbOperations.addBookToList(listId, bookId)
 		}
 	}
 
