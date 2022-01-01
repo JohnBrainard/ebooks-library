@@ -1,5 +1,6 @@
 package dev.johnbrainard.ebooks.api
 
+import dev.johnbrainard.ebooks.EbookCollection
 import dev.johnbrainard.ebooks.index.DefaultIndexer
 import dev.johnbrainard.ebooks.index.Indexer
 import org.koin.dsl.module
@@ -23,5 +24,15 @@ class IndexerScheduler(
 	init {
 		logger.info("scheduling indexer")
 		executor.scheduleAtFixedRate(indexer::run, 1, 60, TimeUnit.MINUTES)
+	}
+
+	fun scheduleCollection(collection: EbookCollection) {
+		logger.info("reindexing collection: ${collection.path}")
+		val collectionEntry = indexer.resolveCollectionEntry(collection)
+
+		executor.schedule(
+			{ indexer.indexCollection(collectionEntry, reindex = true) },
+			0, TimeUnit.SECONDS
+		)
 	}
 }

@@ -53,6 +53,16 @@ fun Application.configureRouting() {
 			)
 		}
 
+		post("/collection/{collection}/index") {
+			val collectionId = call.parameters["collection"]
+				?.let { EbookCollectionId(it) }
+				?: throw IllegalStateException()
+
+			collectionsService.reindexCollection(collectionId)
+
+			call.respondRedirect("/collection/$collectionId")
+		}
+
 		get("/collection/{collection}/entries/{entry}") {
 			val collectionId = call.parameters["collection"]
 				?.let { EbookCollectionId(it) }

@@ -24,7 +24,7 @@ val applicationModule = module {
 	single<EbookListRepository> { DbListRepository(get()) }
 
 	single<PdfMetaExtractor> { PdfBoxMetaExtractor() }
-	single<CollectionsService> { DefaultCollectionsService(get(), get(), get()) }
+	single<CollectionsService> { DefaultCollectionsService(get(), get(), get(), get()) }
 
 	single<DataSource> {
 		HikariDataSource(get())

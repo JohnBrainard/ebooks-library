@@ -1,13 +1,16 @@
 package dev.johnbrainard.ebooks.api.plugins
 
 import dev.johnbrainard.ebooks.*
+import dev.johnbrainard.ebooks.api.IndexerScheduler
+import dev.johnbrainard.ebooks.index.Indexer
 import io.ktor.application.*
 import io.ktor.util.*
 
 class DefaultCollectionsService(
 	private val ebookCollectionRepository: EbookCollectionRepository,
 	private val metaRepository: EbookRepository,
-	private val listRepository: EbookListRepository
+	private val listRepository: EbookListRepository,
+	private val indexerScheduler: IndexerScheduler
 ) : CollectionsService {
 
 	override fun listCollections(call: ApplicationCall): CollectionsDto {
@@ -40,6 +43,11 @@ class DefaultCollectionsService(
 				ebook.toCollectionEntryDto(call, ebookCollectionRepository.getCollection(ebook.collectionId))
 			}
 		)
+	}
+
+	override fun reindexCollection(collectionId: EbookCollectionId) {
+		val collection = ebookCollectionRepository.getCollection(collectionId)
+		indexerScheduler.scheduleCollection(collection)
 	}
 
 	override fun getLists(): ListsDto {

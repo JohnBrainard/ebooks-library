@@ -9,4 +9,10 @@
             <@components.collectionEntry entry=entry showAuthors=true />
         </#list>
     </div>
+
+    <div style="padding: 1em;">
+        <form method="post" action="/collection/${collection.id}/index">
+            <input type="submit" value="Reindex Collection"/>
+        </form>
+    </div>
 </@main.main>
