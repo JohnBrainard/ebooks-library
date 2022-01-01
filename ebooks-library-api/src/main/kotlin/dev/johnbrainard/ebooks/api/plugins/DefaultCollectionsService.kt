@@ -72,6 +72,10 @@ class DefaultCollectionsService(
 		)
 	}
 
+	override fun createList(name: String) {
+		listRepository.saveList(EbookList(name = name))
+	}
+
 	override fun search(call: ApplicationCall, title: String?): SearchResultsDto {
 		val titleFilter = title
 			?.split(' ')

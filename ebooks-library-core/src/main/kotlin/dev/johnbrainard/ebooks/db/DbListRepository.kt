@@ -62,6 +62,18 @@ class DbListRepository(private val dataSource: DataSource) : EbookListRepository
 				}
 			}.toEbookLists().single()
 		}
+
+		fun saveList(list: EbookList) {
+			val statement = connection.prepareStatement(
+				"""
+					insert into ebooks.lists (name) values (?)
+				""".trimIndent()
+			).apply {
+				setString(1, list.name)
+			}
+
+			statement.executeUpdate()
+		}
 	}
 
 	override fun getLists(): List<EbookList> {
@@ -79,7 +91,9 @@ class DbListRepository(private val dataSource: DataSource) : EbookListRepository
 	}
 
 	override fun saveList(list: EbookList) {
-		TODO("Not yet implemented")
+		withOperations { dbOperations ->
+			dbOperations.saveList(list)
+		}
 	}
 
 	private fun <T> withOperations(block: (DbOperations) -> T): T {

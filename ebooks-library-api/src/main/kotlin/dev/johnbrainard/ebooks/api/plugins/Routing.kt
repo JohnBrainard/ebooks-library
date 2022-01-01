@@ -3,9 +3,11 @@ package dev.johnbrainard.ebooks.api.plugins
 import dev.johnbrainard.ebooks.EbookCollectionId
 import dev.johnbrainard.ebooks.EbookId
 import dev.johnbrainard.ebooks.EbookListId
+import dev.johnbrainard.ebooks.api.logger
 import io.ktor.application.*
 import io.ktor.freemarker.*
 import io.ktor.http.content.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.getProperty
@@ -15,6 +17,7 @@ import java.lang.IllegalStateException
 fun Application.configureRouting() {
 
 	val collectionsService: CollectionsService by inject()
+	val logger = logger()
 
 	routing {
 		static("/") {
@@ -79,6 +82,19 @@ fun Application.configureRouting() {
 					mapOf("lists" to listsDto)
 				)
 			)
+		}
+
+		post("/lists") {
+			val form = call.receiveParameters()
+
+			val listName = form["name"]
+				?.trim()
+				?: throw IllegalStateException()
+
+			logger.info("creating new list: $listName")
+			collectionsService.createList(listName)
+
+			call.respondRedirect("/lists", permanent = true)
 		}
 
 		get("/lists/{list}") {

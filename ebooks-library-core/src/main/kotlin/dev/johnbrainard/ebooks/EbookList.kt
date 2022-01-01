@@ -1,7 +1,7 @@
 package dev.johnbrainard.ebooks
 
 data class EbookList(
-	val id: EbookListId,
+	val id: EbookListId? = null,
 	val name: String,
-	val entries: List<EbookListEntry>
+	val entries: List<EbookListEntry> = emptyList()
 )
