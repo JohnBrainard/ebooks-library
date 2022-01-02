@@ -71,7 +71,7 @@ class DefaultIndexer(
 		return CollectionEntry(path, fullPath, collection.name)
 	}
 
-	override fun indexCollection(collectionEntry: CollectionEntry, reindex:Boolean) {
+	override fun indexCollection(collectionEntry: CollectionEntry, reindex: Boolean) {
 		logger.debug("indexing collection $collectionEntry")
 		if (!reindex && collectionRepository.existsAtPath(collectionEntry.path.toString())) {
 			logger.info("collection at path ${collectionEntry.path} already exists; skipping")
@@ -113,7 +113,8 @@ class DefaultIndexer(
 			name = entryPath.fileName.toString(),
 			title = pdfMeta.title ?: entryPath.fileName.toString(),
 			authors = pdfMeta.authors,
-			contents = pdfMeta.contents,
+			contents = pdfMeta.contents
+				.map { it.title },
 			pageCount = pdfMeta.pageCount
 		)
 	}

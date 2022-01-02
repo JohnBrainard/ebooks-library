@@ -1,9 +1,11 @@
 package dev.johnbrainard.ebooks.meta.pdfbox
 
+import dev.johnbrainard.ebooks.meta.ContentsEntry
 import dev.johnbrainard.ebooks.meta.PdfMeta
 import dev.johnbrainard.ebooks.meta.PdfMetaExtractor
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
@@ -24,8 +26,8 @@ class PdfBoxMetaExtractor : PdfMetaExtractor {
 				get() = information.title
 					?.let(::sanitizeTitle)
 
-			override val contents: List<String>
-				get() = contents.mapNotNull { sanitizeTitle(it) }
+			override val contents: List<ContentsEntry>
+				get() = contents.mapNotNull { it }
 
 			override val authors: Set<String>
 				get() = information.author?.let { setOf(it) } ?: emptySet()
@@ -36,22 +38,47 @@ class PdfBoxMetaExtractor : PdfMetaExtractor {
 
 	private fun countPages(doc: PDDocument): Int = doc.numberOfPages
 
-	private fun extractContents(doc: PDDocument): List<String> {
-		val outline = doc.documentCatalog?.documentOutline
-		if (outline == null) {
-			return emptyList()
+	private fun extractContents(doc: PDDocument): List<ContentsEntry> {
+		val contentsRoot = doc.documentCatalog?.documentOutline?.firstChild
+		return if (contentsRoot != null) {
+			extractContents(contentsRoot, 0)
+				.toList()
+		} else {
+			emptyList()
 		}
-
-		var current = outline.firstChild
-		val contents = sequence<String> {
-			while (current != null) {
-				yield(current.title)
-				current = current.nextSibling
-			}
-		}.toList()
-
-		return contents
 	}
+
+	private fun extractContents(item: PDOutlineItem, level: Int): Sequence<ContentsEntry> = sequence {
+		var next: PDOutlineItem? = item
+		do {
+			if (next == null) break
+
+			val title = next.title?.let { sanitizeTitle(it) }
+			if (title != null) {
+				yield(
+					ContentsEntry(
+						level = level,
+						title = title,
+						pageStart = null,
+						pageEnd = null
+					)
+				)
+			}
+
+			if (next.firstChild != null) {
+				yieldAll(extractContents(next.firstChild, level + 1))
+			}
+
+			next = next.nextSibling
+		} while (next != null)
+	}
+
+	private fun PDOutlineItem.toContentsEntry(level: Int) = ContentsEntry(
+		level = level,
+		title = title,
+		pageStart = null,
+		pageEnd = null
+	)
 }
 
 private fun sanitizeTitle(title: String) = title
