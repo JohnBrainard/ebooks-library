@@ -63,7 +63,9 @@ class DbBookRepository(private val dataSource: DataSource) : EbookRepository {
 					on conflict (collection_id, path) do update
 					set name=excluded.name,
 						title=excluded.title,
-						authors=excluded.authors
+						authors=excluded.authors,
+						contents=excluded.contents,
+						page_count=excluded.page_count
 				""".trimIndent()
 			).apply {
 				setString(1, book.collectionId.toString())
