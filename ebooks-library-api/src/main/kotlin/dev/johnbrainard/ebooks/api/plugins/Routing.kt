@@ -109,6 +109,11 @@ fun Application.configureRouting() {
 			call.respondRedirect("/collection/$collectionId/entries/$bookId", permanent = true)
 		}
 
+		post("/index") {
+			collectionsService.reindexLibrary()
+			call.respondRedirect("/", permanent = true)
+		}
+
 		get("/lists") {
 			val listsDto = collectionsService.getLists()
 

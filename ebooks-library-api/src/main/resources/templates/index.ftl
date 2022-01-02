@@ -18,4 +18,10 @@
             </div>
         </#list>
     </div>
+
+    <div style="padding: 1em;">
+        <form method="post" action="/index">
+            <input type="submit" value="Reindex Library"/>
+        </form>
+    </div>
 </@main.main>

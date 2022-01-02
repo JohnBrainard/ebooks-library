@@ -26,6 +26,14 @@ class IndexerScheduler(
 		executor.scheduleAtFixedRate(indexer::run, 1, 60, TimeUnit.MINUTES)
 	}
 
+	fun scheduleFullIndex() {
+		logger.info("reindexing library")
+		executor.schedule(
+			{ indexer.run(true) },
+			0, TimeUnit.SECONDS
+		)
+	}
+
 	fun scheduleCollection(collection: EbookCollection) {
 		logger.info("reindexing collection: ${collection.path}")
 		val collectionEntry = indexer.resolveCollectionEntry(collection)

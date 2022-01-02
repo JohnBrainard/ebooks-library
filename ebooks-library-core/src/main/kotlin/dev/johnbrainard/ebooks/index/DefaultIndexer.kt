@@ -24,14 +24,14 @@ class DefaultIndexer(
 
 	private val logger = logger()
 
-	override fun run() {
+	override fun run(reindex: Boolean) {
 		logger.info("scheduling indexing")
 		executor.submit {
 			logger.info("indexing started")
 			try {
 				scanCollections()
 					.onEach { logger.debug("indexing entry: $it") }
-					.forEach { indexCollection(it) }
+					.forEach { indexCollection(it, reindex) }
 			} catch (ex: Exception) {
 				logger.error("uncaught exception encountered", ex)
 			}

@@ -45,6 +45,10 @@ class DefaultCollectionsService(
 		)
 	}
 
+	override fun reindexLibrary() {
+		indexerScheduler.scheduleFullIndex()
+	}
+
 	override fun reindexCollection(collectionId: EbookCollectionId) {
 		val collection = ebookCollectionRepository.getCollection(collectionId)
 		indexerScheduler.scheduleCollection(collection)
