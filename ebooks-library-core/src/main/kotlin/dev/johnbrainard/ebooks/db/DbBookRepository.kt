@@ -1,14 +1,13 @@
 package dev.johnbrainard.ebooks.db
 
 import dev.johnbrainard.ebooks.*
-import java.sql.Connection
-import java.sql.ResultSet
-import java.sql.SQLException
+import java.sql.*
 import javax.sql.DataSource
 
 class DbBookRepository(private val dataSource: DataSource) : EbookRepository {
 
 	private val logger = logger()
+	private val contentsSerializer: ContentsSerializer = ContentsSerializer()
 
 	private inner class DbOperations(val connection: Connection) {
 		fun listBooks(collectionId: EbookCollectionId): Collection<Ebook> {
@@ -56,10 +55,12 @@ class DbBookRepository(private val dataSource: DataSource) : EbookRepository {
 				throw EbooksException("use updateBook instead when saving with a known id")
 			}
 
+			val contentsJson = contentsSerializer.serialize(book.contents)
+
 			val statement = connection.prepareStatement(
 				"""
 					insert into ebooks.books (collection_id, name, path, title, authors, contents, page_count)
-					values (?::uuid, ?, ?, ?, ?, ?, ?)
+					values (?::uuid, ?, ?, ?, ?, ?::jsonb, ?)
 					on conflict (collection_id, path) do update
 					set name=excluded.name,
 						title=excluded.title,
@@ -73,7 +74,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookRepository {
 				setString(3, book.path)
 				setString(4, book.title)
 				setArray(5, connection.createArrayOf("text", book.authors.toTypedArray()))
-				setArray(6, connection.createArrayOf("text", book.contents.toTypedArray()))
+				setString(6, contentsJson)
 				setInt(7, book.pageCount)
 			}
 
@@ -86,7 +87,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookRepository {
 					select book_id, collection_id, name, path, title, authors, contents, page_count
 					from ebooks.books
 					where to_tsvector('english', title) @@ to_tsquery(?)
-						or to_tsvector('english', text_array_to_string(contents, ' ', ' ')) @@ to_tsquery(?)
+						or jsonb_to_tsvector('english', contents, '"string"') @@ to_tsquery(?)
 					order by title, name
 				""".trimIndent()
 			).apply {
@@ -152,7 +153,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookRepository {
 
 	private fun ResultSet.readEbook(): Ebook {
 		val authors = getArray("authors").array as Array<String>
-		val contents = getArray("contents").array as Array<String>
+		val contentsJson = getString("contents")
 
 		return Ebook(
 			id = EbookId(getString("book_id")),
@@ -161,7 +162,7 @@ class DbBookRepository(private val dataSource: DataSource) : EbookRepository {
 			path = getString("path"),
 			title = getString("title"),
 			authors = authors.toSet(),
-			contents = contents.toList(),
+			contents = contentsSerializer.deserialize(contentsJson).toList(),
 			pageCount = getInt("page_count")
 		)
 	}

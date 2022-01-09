@@ -53,7 +53,7 @@
                 title         text not null,
                 authors       text[] not null default '{}',
                 path          text not null,
-                contents      text[] not null default '{}',
+                contents      jsonb not null default '[]',
                 page_count    int,
 
                 constraint unq_ebooks_collection_id_path unique (collection_id, path)
@@ -69,7 +69,7 @@
 
     <changeSet id="1.0-contents-ft-index" author="john" context="schema">
         <sql>
-            create index idx_ts_contents on ebooks.books using gin (to_tsvector('english', text_array_to_string(contents, ' ', ' ')));
+            create index idx_ts_contents on ebooks.books using gin (jsonb_to_tsvector('english', contents, '"string"'));
         </sql>
     </changeSet>
 

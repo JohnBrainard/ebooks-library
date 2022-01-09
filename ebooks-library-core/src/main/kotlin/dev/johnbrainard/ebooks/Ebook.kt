@@ -8,5 +8,5 @@ data class Ebook(
 	val path: String,
 	val pageCount: Int,
 	val authors: Set<String>,
-	val contents: List<String>
+	val contents: List<EbookContents>
 )

@@ -1,4 +1,4 @@
-package dev.johnbrainard.ebooks.meta
+package dev.johnbrainard.ebooks.index
 
 data class ContentsEntry(
 	val level: Int,

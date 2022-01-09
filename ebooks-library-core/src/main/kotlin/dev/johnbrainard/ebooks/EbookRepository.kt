@@ -13,7 +13,7 @@ interface EbookRepository {
 		var title: String? = null
 		var pageCount: Int? = null
 		var authors: MutableList<String> = mutableListOf()
-		var contents: MutableList<String> = mutableListOf()
+		var contents: MutableList<EbookContents> = mutableListOf()
 
 		fun build(): Ebook {
 			return Ebook(

@@ -16,5 +16,10 @@ repositories {
 dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.apache.pdfbox:pdfbox:$pdfbox_version")
+
+    implementation("com.fasterxml.jackson.core:jackson-databind:$jackson_version")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version")
+
+
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
 }

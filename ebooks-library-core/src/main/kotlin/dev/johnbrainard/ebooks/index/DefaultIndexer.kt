@@ -1,8 +1,6 @@
 package dev.johnbrainard.ebooks.index
 
-import dev.johnbrainard.ebooks.EbookCollection
-import dev.johnbrainard.ebooks.EbookCollectionRepository
-import dev.johnbrainard.ebooks.EbookRepository
+import dev.johnbrainard.ebooks.*
 import dev.johnbrainard.ebooks.logger
 import dev.johnbrainard.ebooks.meta.PdfMetaExtractor
 import java.nio.file.FileSystems
@@ -55,13 +53,12 @@ class DefaultIndexer(
 	override fun scanCollection(collectionEntry: CollectionEntry): Sequence<BookEntry> {
 		val globMatcher = FileSystems.getDefault().getPathMatcher("glob:**/*.pdf")
 
-		val entries = Files.walk(collectionEntry.fullPath)
+		return Files.walk(collectionEntry.fullPath)
+			.asSequence()
 			.filter { it.isRegularFile() && globMatcher.matches(it) }
 			.map { path ->
 				collectionEntry.createBookEntry(path)
 			}
-
-		return entries.asSequence()
 	}
 
 	override fun resolveCollectionEntry(collection: EbookCollection): CollectionEntry {
@@ -85,8 +82,8 @@ class DefaultIndexer(
 
 		executor.submit {
 			try {
-				val bookEntries = scanCollection(collectionEntry)
-				bookEntries.onEach { logger.debug("indexing book entry: $it") }
+				scanCollection(collectionEntry)
+					.onEach { logger.debug("indexing book entry: ${it.path}, ${it.title}") }
 					.forEach { book ->
 						ebookRepository.saveBook {
 							collectionId = collection.id
@@ -95,7 +92,14 @@ class DefaultIndexer(
 							pageCount = book.pageCount
 							path = book.path.toString()
 							authors.addAll(book.authors)
-							contents.addAll(book.contents)
+							contents.addAll(book.contents.map {
+								EbookContents(
+									level = it.level,
+									title = it.title,
+									pageStart = it.pageStart,
+									destination = it.destination
+								)
+							})
 						}
 					}
 			} catch (ex: Exception) {
@@ -113,8 +117,14 @@ class DefaultIndexer(
 			name = entryPath.fileName.toString(),
 			title = pdfMeta.title ?: entryPath.fileName.toString(),
 			authors = pdfMeta.authors,
-			contents = pdfMeta.contents
-				.map { it.title },
+			contents = pdfMeta.contents.map {
+				ContentsEntry(
+					level = it.level,
+					title = it.title,
+					pageStart = it.pageStart,
+					destination = it.destination
+				)
+			},
 			pageCount = pdfMeta.pageCount
 		)
 	}

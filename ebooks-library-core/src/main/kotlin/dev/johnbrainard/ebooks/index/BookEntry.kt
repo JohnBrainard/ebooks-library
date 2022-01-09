@@ -9,5 +9,5 @@ data class BookEntry(
 	val title: String,
 	val pageCount: Int,
 	val authors: Set<String>,
-	val contents: List<String>
+	val contents: List<ContentsEntry>
 )
