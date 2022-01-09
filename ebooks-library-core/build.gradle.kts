@@ -1,9 +1,11 @@
+val jackson_version:String by project
 val kotlin_version: String by project
 val logback_version: String by project
 val pdfbox_version: String by project
 
 plugins {
     kotlin("jvm")
+    idea
 }
 
 group = "dev.johnbrainard.ebooks"
@@ -11,6 +13,13 @@ version = "0.0.1"
 
 repositories {
     mavenCentral()
+}
+
+idea {
+    module {
+        isDownloadSources = true
+        isDownloadJavadoc = true
+    }
 }
 
 dependencies {

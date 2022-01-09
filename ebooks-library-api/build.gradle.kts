@@ -9,6 +9,7 @@ val postgres_version: String by project
 
 plugins {
 	application
+	idea
 	kotlin("jvm")
 	kotlin("plugin.serialization") version "1.6.10"
 }
@@ -18,6 +19,14 @@ version = "0.0.1"
 
 application {
 	mainClass.set("dev.johnbrainard.ebooks.api.ApplicationKt")
+}
+
+
+idea {
+	module {
+		isDownloadSources = true
+		isDownloadJavadoc = true
+	}
 }
 
 repositories {
