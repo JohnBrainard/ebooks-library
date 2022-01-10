@@ -112,3 +112,27 @@ ul.nav a {
     text-decoration: none;
     color: white;
 }
+
+ul.contents li {
+    list-style-type: none;
+}
+
+ul.contents li.level_1 {
+    padding-left: 2em;
+}
+
+ul.contents li.level_2 {
+    padding-left: 4em;
+}
+
+ul.contents li.level_3 {
+    padding-left: 6em;
+}
+
+ul.contents li.level_4 {
+    padding-left: 8em;
+}
+
+ul.contents li.level_5 {
+    padding-left: 10em;
+}

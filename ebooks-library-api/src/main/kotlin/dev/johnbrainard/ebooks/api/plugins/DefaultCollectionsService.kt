@@ -2,7 +2,6 @@ package dev.johnbrainard.ebooks.api.plugins
 
 import dev.johnbrainard.ebooks.*
 import dev.johnbrainard.ebooks.api.IndexerScheduler
-import dev.johnbrainard.ebooks.index.Indexer
 import io.ktor.application.*
 import io.ktor.util.*
 
@@ -134,7 +133,7 @@ fun Ebook.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollectio
 		title = title,
 		authors = authors,
 		pageCount = pageCount,
-		contents = contents.map { it.title },
+		contents = contents.map { it.toContentsDto(call, this, collection) },
 		url = call.url {
 			path("/collections/${collectionId}/${id}")
 		},
@@ -145,3 +144,15 @@ fun Ebook.toCollectionEntryDto(call: ApplicationCall, collection: EbookCollectio
 			path("/download/${collection.path}/${path}")
 		}
 	)
+
+fun EbookContents.toContentsDto(call: ApplicationCall, ebook: Ebook, collection: EbookCollection): ContentsDto =
+	ContentsDto(
+		title = title,
+		level = level,
+		url = call.url {
+			path("/download/${collection.path}/${ebook.path}")
+			pageStart?.let { fragment = "page=${pageStart}" }
+			destination?.let { fragment = "$destination" }
+		}
+	)
+

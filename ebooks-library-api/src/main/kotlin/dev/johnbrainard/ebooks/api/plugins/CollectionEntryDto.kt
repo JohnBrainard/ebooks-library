@@ -12,7 +12,7 @@ data class CollectionEntryDto(
 	val path: String,
 	val pageCount: Int,
 	val authors: Collection<String>,
-	val contents: Collection<String>
+	val contents: Collection<ContentsDto>
 ) {
 	var meta: MetaDto? = null
 }

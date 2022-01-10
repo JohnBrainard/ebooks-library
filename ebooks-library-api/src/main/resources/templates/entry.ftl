@@ -1,3 +1,5 @@
+<#ftl output_format="HTML">
+
 <#import "layout/main.ftl" as main>
 <#import "layout/components.ftl" as components>
 
@@ -11,9 +13,11 @@
         <div>Collection: <a href="/collection/${entry.collectionId}">${entry.collectionName}</a></div>
 
         <h3>Contents</h3>
-        <ul>
+        <ul class="contents">
             <#list entry.contents as contentsItem>
-                <li>${contentsItem}</li>
+                <li class="level_${contentsItem.level}">
+                    <a href="${contentsItem.url?no_esc}" target="_blank">${contentsItem.title}</a>
+                </li>
             </#list>
         </ul>
 
