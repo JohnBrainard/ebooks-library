@@ -81,18 +81,18 @@ class DbBookRepository(private val dataSource: DataSource) : EbookRepository {
 			statement.executeUpdate()
 		}
 
-		fun searchBooks(terms: String? = null): Collection<Ebook> {
+		fun searchBooks(query: String? = null): Collection<Ebook> {
 			val statement = connection.prepareStatement(
 				"""
 					select book_id, collection_id, name, path, title, authors, contents, page_count
 					from ebooks.books
-					where to_tsvector('english', title) @@ to_tsquery(?)
-						or jsonb_to_tsvector('english', contents, '"string"') @@ to_tsquery(?)
+					where to_tsvector('english', title) @@ websearch_to_tsquery('english', ?)
+						or jsonb_to_tsvector('english', contents, '"string"') @@ websearch_to_tsquery('english', ?)
 					order by title, name
 				""".trimIndent()
 			).apply {
-				setString(1, terms)
-				setString(2, terms)
+				setString(1, query)
+				setString(2, query)
 			}
 
 			val resultSet = statement.executeQuery()
@@ -122,13 +122,13 @@ class DbBookRepository(private val dataSource: DataSource) : EbookRepository {
 		}
 	}
 
-	override fun search(title: String?): Collection<Ebook> {
-		if (title == null) {
+	override fun search(query: String?): Collection<Ebook> {
+		if (query == null) {
 			return emptyList()
 		}
 
 		return withOperations { dbOperations ->
-			dbOperations.searchBooks(terms = title)
+			dbOperations.searchBooks(query = query)
 		}
 	}
 

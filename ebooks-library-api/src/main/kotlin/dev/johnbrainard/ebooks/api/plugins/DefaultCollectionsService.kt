@@ -91,12 +91,8 @@ class DefaultCollectionsService(
 		listRepository.addBookToList(listId, bookId)
 	}
 
-	override fun search(call: ApplicationCall, title: String?): SearchResultsDto {
-		val titleFilter = title
-			?.split(' ')
-			?.joinToString(" & ")
-
-		val results = metaRepository.search(title = titleFilter)
+	override fun search(call: ApplicationCall, query: String?): SearchResultsDto {
+		val results = metaRepository.search(title = query)
 			.map { it.toCollectionEntryDto(call, ebookCollectionRepository.getCollection(it.collectionId)) }
 
 		return SearchResultsDto(
