@@ -1,0 +1,17 @@
+version: '3'
+services:
+  ebooks-library:
+    image: jfbrainard/ebooks-library:local
+    container_name: ebooks-library
+    ports:
+      - "8000:8000"
+    volumes:
+      - type: bind
+        source: ${LOCAL_EBOOK_PATH}
+        target: /ebooks
+    networks:
+      - local-env_default
+
+networks:
+  local-env_default:
+    external: true
